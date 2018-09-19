@@ -4,7 +4,8 @@
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"test-bn": "node ./test/bn.js"
 	},
 	"repository": {
 		"type": "git",
