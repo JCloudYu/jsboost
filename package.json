@@ -1,0 +1,23 @@
+{
+	"name": "jsboost",
+	"version": "0.0.1",
+	"description": "A tiny library that extends the capability of javascript",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JCloudYu/jsboost.git"
+	},
+	"keywords": [
+		"Javascript",
+		"Boost"
+	],
+	"author": "JCloudYu",
+	"license": "WTFPL",
+	"bugs": {
+		"url": "https://github.com/JCloudYu/jsboost/issues"
+	},
+	"homepage": "https://github.com/JCloudYu/jsboost#readme"
+}
