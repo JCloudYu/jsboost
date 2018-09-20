@@ -731,6 +731,26 @@
             };
         })();
 
+        /**
+         * Deserialize BigNumber by object
+         * @param {Object} obj
+         * @param {number} obj.c
+         * @param {number} obj.e
+         * @param {number[]} obj.s
+         * @return {BigNumber}
+         */
+        BigNumber.deserialize = function (obj) {
+            let bn = new BigNumber();
+
+            if (obj !== null && (typeof obj === 'object')) {
+                bn.c = obj.c;
+                bn.e = obj.e;
+                bn.s = obj.s;
+            }
+
+            return bn;
+        };
+
 
         // PRIVATE FUNCTIONS
 
@@ -2625,7 +2645,7 @@
          * Return as toString, but do not accept a base argument, and include the minus sign for
          * negative zero.
          */
-        P.valueOf = P.toJSON = function () {
+        P.valueOf = function () {
             let str,
                 n = this,
                 e = n.e;
@@ -2638,9 +2658,17 @@
                 ? toExponential(str, e)
                 : toFixedPoint(str, e, '0');
 
-            return n.s < 0 ? '-' + str : str;
+            return (n.s < 0) ? `-${str}` : str;
         };
 
+        // 07571 + base64url_string
+        P.toJSON = function () {
+            let bnStructure = Object.assign({}, this),
+                bnStr = base64urlEncode(Buffer.from(JSON.stringify(bnStructure))),
+                preStr = '\u0000\u0007\u0005\u0007\u0001';
+
+            return preStr + bnStr;
+        };
 
         P._isBigNumber = true;
 
@@ -2782,6 +2810,23 @@
     BigNumber = clone();
     BigNumber['default'] = BigNumber.BigNumber = BigNumber;
 
+    // /**
+    //  * 
+    //  * @param {Object} obj
+    //  * @param {number} obj.c
+    //  * @param {number} obj.e
+    //  * @param {number[]} obj.s
+    //  */
+    // BigNumber['deserialize'] = function(obj) {
+    //     let bn = new BigNumber();
+    //     bn.c = obj.c;
+    //     bn.e = obj.e;
+    //     bn.s = obj.s;
+
+    //     return bn;
+    // };
+
     // For Node.js
+    const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');
     module.exports = BigNumber;
 })();
