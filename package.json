@@ -1,13 +1,15 @@
 {
 	"name": "jsboost",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"test-bn": "node ./test/bn.js",
 		"test-base64url": "node ./test/base64url.js",
-		"test-serialization": "node ./test/serialization.js"
+		"test-serialization": "node ./test/serialization.js",
+		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
+		"test-event-emitter": "node ./test/event-emitter.js"
 	},
 	"repository": {
 		"type": "git",

@@ -66,7 +66,7 @@
 	
 	process.stdout.write( "emitAwait... " );
 	prev=Date.now(); await emitter.emitAwait('b'); diff = Date.now()-prev;
-	process.stdout.write( diff >= 5000 ? "Passed\n" : "Failed\n" );
+	process.stdout.write( (diff >= 5000 && diff < 6000) ? "Passed\n" : "Failed\n" );
 	
 	
 	
