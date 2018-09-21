@@ -5,8 +5,8 @@
 (()=>{
 	"use strict";
 	
-	const DOMEventEmitter = require( './native/dom-event-emitter' );
-	const Base64URL = require( './node/bas64url' );
+	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
+	const Base64URL = require( './node/base64url' );
 	const BigNumber = require( './node/bn' );
 	const { serialize:Serialize, deserialize:Deserialize } = require( './node/serialization' );
 	

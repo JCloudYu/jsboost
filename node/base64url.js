@@ -22,7 +22,7 @@
         }
     
         return buffer.toString();
-    }
+    };
 
     module.exports = {
         /**

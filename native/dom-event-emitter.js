@@ -341,4 +341,4 @@
 	// endregion
 	
 	exports.DOMEventEmitter = DOMEventEmitter;
-})(window||(module?module.exports:{}));
+})((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
