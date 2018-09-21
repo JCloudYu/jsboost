@@ -4,7 +4,7 @@
 	const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');
 	const BigNumber = require('./bn');
 
-	const __preString = "\u0000\u0007\u0005\u0007"
+	const __preString = "\u0000\u0007\u0005\u0007";
 	const __receiver = (key, value) => {
 		if (typeof value !== 'string') {
 			return value;
