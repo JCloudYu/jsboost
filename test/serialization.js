@@ -22,15 +22,15 @@
         k8: null,
         k9: undefined
     };
-    let str = serialize(data);
-    let dataFromStr = deserialize(str);
+    let serializeStr = serialize(data);
+    let deserializeData = deserialize(serializeStr);
 
     console.log('Origin data:');
     console.log(data);
 
     console.log('\nSerialize data:');
-    console.log(str);
+    console.log(serializeStr);
 
     console.log('\nDeserialize data:');
-    console.log(dataFromStr);
+    console.log(deserializeData);
 })();

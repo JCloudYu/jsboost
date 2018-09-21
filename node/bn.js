@@ -98,7 +98,8 @@
         // the arguments to toExponential, toFixed, toFormat, and toPrecision.
         MAX = 1E9,                                   // 0 to MAX_INT32
 
-        crypto = null;                               // crypto module
+        crypto = null,                               // crypto module
+        { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');      // base64url module
 
     /*
      * Create and return a BigNumber constructor.
@@ -2810,23 +2811,6 @@
     BigNumber = clone();
     BigNumber['default'] = BigNumber.BigNumber = BigNumber;
 
-    // /**
-    //  * 
-    //  * @param {Object} obj
-    //  * @param {number} obj.c
-    //  * @param {number} obj.e
-    //  * @param {number[]} obj.s
-    //  */
-    // BigNumber['deserialize'] = function(obj) {
-    //     let bn = new BigNumber();
-    //     bn.c = obj.c;
-    //     bn.e = obj.e;
-    //     bn.s = obj.s;
-
-    //     return bn;
-    // };
-
     // For Node.js
-    const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');
     module.exports = BigNumber;
 })();
