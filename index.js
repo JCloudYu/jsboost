@@ -5,7 +5,15 @@
 (()=>{
 	"use strict";
 	
+	const DOMEventEmitter = require( './native/dom-event-emitter' );
+	const {serialize:Serialize, deserialize:Deserialize} = require( './node/serialization' );
+	const BigNumber = require( './node/bn' );
+	
 	module.exports = {
-		BigInt: require( './node/bigint' )
+		DOMEventEmitter,
+	
+		BigNumber,
+		Serialize,
+		Deserialize
 	}
 })();

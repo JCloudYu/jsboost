@@ -4,14 +4,28 @@
 	const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');
 	const BigNumber = require('./bn');
 
-	const __preString = "\u0000\u0007\u0005\u0007";
-	const __receiver = (key, value) => {
+	module.exports = {
+		serialize: (obj) => {
+			return JSON.stringify(obj, ___NESTED_DUMP_OBJECT_KEYS(obj).sort());
+		},
+		deserialize: (str) => {
+			return JSON.parse(str, ___JSON_PARSE_RECEIVER);
+		}
+	};
+	
+	
+	
+	
+	
+	
+	const MAGIC_STRING = "\u0000\u0007\u0005\u0007";
+	function ___JSON_PARSE_RECEIVER(key, value) {
 		if (typeof value !== 'string') {
 			return value;
 		}
 
 		let result = value;
-		if (value.slice(0, 4) === __preString) {
+		if (value.slice(0, 4) === MAGIC_STRING) {
 			let type = value.charCodeAt(4);
 			switch(type) {
 				// big number
@@ -32,27 +46,19 @@
 
 		return result;
 	}
+	function ___NESTED_DUMP_OBJECT_KEYS(obj, container=null) {
+		if ( Object(obj) !== obj ) { return []; }
+	
+		container = container||[];
+		for ( let i in obj ) {
+			if (!obj.hasOwnProperty(i)) continue;
 
-	module.exports = {
-		serialize: (obj) => {
-			let flattenArray = [];
-			let flattenObject = (obj) => {
-				for (let i in obj) {
-					if (!obj.hasOwnProperty(i)) continue;
-		
-					flattenArray.push(i);
-					if (obj[i] !== null && (typeof obj[i]) === 'object') {
-						flattenObject(obj[i]);
-					}
-				}
-			};
-			flattenObject(obj);
-		
-			let str = JSON.stringify(obj, flattenArray.sort());
-			return str;
-		},
-		deserialize: (str) => {
-			return JSON.parse(str, __receiver);
+			container.push(i);
+			if (Object(obj[i]) === obj[i]) {
+				___NESTED_DUMP_OBJECT_KEYS(obj[i], container);
+			}
 		}
-	};
+		
+		return container;
+	}
 })();
