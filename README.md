@@ -7,13 +7,13 @@
 #### Big Number ####
 
 ```javascript
-const BN = require('bn');
+const BigNumber = require('jsboost');
 // add: +
 // sub: -
 // mul: *
 // div: /
 // pow: ^
-let result = new BN(5).add(97).sub(53).add(434).mul(5435423).add(321453).mul(21).div(2).pow(2);
+let result = new BigNumber(5).add(97).sub(53).add(434).mul(5435423).add(321453).mul(21).div(2).pow(2);
 // 760056543044267246001
 console.log(result);
 ```
@@ -23,7 +23,7 @@ console.log(result);
 #### Base64Url ####
 
 ```javascript
-const { encode, decode } = require('base64url');
+const { encode, decode } = require('jsboost').Base64URL;
 let str = 'BC';
 let encodeStr = encode(str);
 let decodeStr = decode(encodeStr);
@@ -34,20 +34,19 @@ console.log(`Origin: ${str}, Encode: ${encodeStr}, Decode: ${decodeStr}`);
 #### Serialization ####
 
 ```javascript
-const BN = require('bn');
-const { serialize, deserialize } = require('serialization');
+const { BigNumber, Serialize, Deserialize } = require('jsboost');
 
 let number = '760056543044267246001';
 let data = {
-    k1: new BN(number),
-    k2: new BN(`-${number}`),
+    k1: new BigNumber(number),
+    k2: new BigNumber(`-${number}`),
     k3: false,
     k4: 123456,
     k5: 'a4b5c6',
-    k6: [new BN(number), new BN(`-${number}`), false, 123456, 'a4b5c6'],
+    k6: [new BigNumber(number), new BigNumber(`-${number}`), false, 123456, 'a4b5c6'],
     k7: {
-        k71: new BN(number),
-        k72: new BN(`-${number}`),
+        k71: new BigNumber(number),
+        k72: new BigNumber(`-${number}`),
         k73: false,
         k74: 123,
         k75: 'a4b5c6'
@@ -55,8 +54,8 @@ let data = {
     k8: null,
     k9: undefined
 };
-let serializeStr = serialize(data);
-let deserializeData = deserialize(serializeStr);
+let serializeStr = Serialize(data);
+let deserializeData = Deserialize(serializeStr);
 
 console.log('Origin data:');
 console.log(data);

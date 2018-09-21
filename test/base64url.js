@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { encode, decode } = require('../node/base64url');
+    const { encode, decode } = require('../index').Base64URL;
 
     let str1 = 'A';
     let encodeStr1 = encode(str1);
