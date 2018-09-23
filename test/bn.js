@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { BigNumber } = require('../index');
+    const { BigNumber } = require('../jsboost');
     const max = 100000;
     let start = 0, end = 0;
 

@@ -5,7 +5,7 @@
 (async()=>{
 	"use strict";
 	
-	const {AsyncInvoke} = require( '../index' );
+	const {AsyncInvoke} = require( '../jsboost' );
 	const async_provider = new AsyncInvoke();
 	
 	let result = await async_provider.invoke(()=>{

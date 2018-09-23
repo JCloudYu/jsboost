@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { BigNumber, Serialize, Deserialize } = require('../index');
+    const { BigNumber, Serialize, Deserialize } = require('../jsboost');
 
     let number = '760056543044267246001';
     let data = {

@@ -5,7 +5,7 @@
 (async()=>{
 	"use strict";
 	
-	const {EventEmitter} = require( '../index' );
+	const {EventEmitter} = require( '../jsboost' );
 	const emitter = new EventEmitter();
 	
 	

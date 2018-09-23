@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { encode, decode } = require('../index').Base64URL;
+    const { encode, decode } = require('../jsboost').Base64URL;
 
     let str1 = 'A';
     let encodeStr1 = encode(str1);
