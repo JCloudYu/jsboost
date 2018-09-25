@@ -97,9 +97,10 @@
         // The limit on the value of DECIMAL_PLACES, TO_EXP_NEG, TO_EXP_POS, MIN_EXP, MAX_EXP, and
         // the arguments to toExponential, toFixed, toFormat, and toPrecision.
         MAX = 1E9,                                   // 0 to MAX_INT32
+        crypto = null;                               // crypto module
 
-        crypto = null,                               // crypto module
-        { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');      // base64url module
+    const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url'),    // base64url module
+          { UInt64 } = require('../native/uint64');                                         // jsboost module
 
     /*
      * Create and return a BigNumber constructor.
@@ -221,6 +222,7 @@
             }
 
             if (b == null) {
+                n = ___UNPACK(n);
 
                 // Duplicate.
                 if (n instanceof BigNumber) {
@@ -1864,6 +1866,7 @@
                 x = this,
                 a = x.s;
 
+            y = ___UNPACK(y);
             y = new BigNumber(y, b);
             b = y.s;
 
@@ -1997,6 +2000,7 @@
             let q, s,
                 x = this;
 
+            y = ___UNPACK(y);
             y = new BigNumber(y, b);
 
             // Return NaN if x is Infinity or NaN, or y is NaN or zero.
@@ -2157,6 +2161,7 @@
                 x = this,
                 a = x.s;
 
+            y = ___UNPACK(y);
             y = new BigNumber(y, b);
             b = y.s;
 
@@ -2805,6 +2810,22 @@
 
         return str;
     }
+
+    /**
+	 * Get raw Uint32Array values converted from source value
+	 * @param {Uint64|Int64} value
+	 * @returns {BigNumber}
+	 * @private
+	 */
+	function ___UNPACK(value) {
+
+		if (value instanceof UInt64) {
+            let base = new BigNumber(2).pow(32);
+			return new BigNumber(value.hi).mul(base).add(value.lo);
+		}
+		
+		return value;
+	}
 
 
     // EXPORT
