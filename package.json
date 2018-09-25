@@ -8,6 +8,7 @@
 		"test-bn": "node ./test/bn.js",
 		"test-base64url": "node ./test/base64url.js",
 		"test-serialization": "node ./test/serialization.js",
+		"test-uint64": "node ./test/uint64.js",
 		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
 		"test-event-emitter": "node ./test/event-emitter.js",
 		"test-async-invoke": "node ./test/async-invoke.js"
