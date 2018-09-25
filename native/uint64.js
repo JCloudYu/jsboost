@@ -2,7 +2,7 @@
  * Author: JCloudYu
  * Create: 2018/09/24
 **/
-((exported)=>{
+((exports)=>{
 	"use strict";
 	
 	const _previous = exports.AsyncInvoke;
@@ -305,6 +305,11 @@
 			}
 			
 			return new Uint32Array(buff);
+		}
+		
+		// UInt64 represented with UInt32 values, little-endian
+		if ( Array.isArray(value) ) {
+			return new Uint32Array(value);
 		}
 		
 		const type = typeof value;
