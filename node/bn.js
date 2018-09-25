@@ -2812,7 +2812,7 @@
     }
 
     /**
-	 * Get raw Uint32Array values converted from source value
+	 * Get BigNumber value converted from source value
 	 * @param {Uint64|Int64} value
 	 * @returns {BigNumber}
 	 * @private
@@ -2826,7 +2826,6 @@
 		
 		return value;
 	}
-
 
     // EXPORT
     BigNumber = clone();
