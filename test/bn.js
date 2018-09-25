@@ -13,7 +13,7 @@
         result2 = new BigNumber(5).add(97).sub(53).add(434).mul(5435423).add(321453).mul(21).div(2).pow(2);
     }
     end = new Date().getTime();
-    console.log(`ManCnt: ${max}, Time: ${(end - start) / 1000} sec`);
+    console.log(`MaxCnt: ${max}, Time: ${(end - start) / 1000} sec`);
     console.log(`Result1: ${result1.toString()}, Result2: ${result2.toString()}`);
 
     BigNumber.config({ CRYPTO: true });
