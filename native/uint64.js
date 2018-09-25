@@ -103,6 +103,9 @@
 			___MULTIPLY(newVal._ta, val);
 			return newVal;
 		}
+		mul(...args) {
+			return this.multiply(...args);
+		}
 		divide(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -110,6 +113,9 @@
 			}
 			
 			return new UInt64(___DIVIDE(this._ta.slice(0), val.slice(0)));
+		}
+		div(...args) {
+			return this.divide(...args);
 		}
 		modulo(value) {
 			const val = ___UNPACK(value);
