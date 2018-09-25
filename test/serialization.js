@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { BigNumber, Serialize, Deserialize } = require('../jsboost');
+    const { UInt64, BigNumber, Serialize, Deserialize } = require('../jsboost');
 
     let number = '760056543044267246001';
     let data = {
@@ -19,7 +19,9 @@
             k75: 'a4b5c6'
         },
         k8: null,
-        k9: undefined
+        k9: undefined,
+        k10: new UInt64(Number.MAX_SAFE_INTEGER),
+        k11: new UInt64([0x0000FFFF, 0xFFFF0000])
     };
     let serializeStr = Serialize(data);
     let deserializeData = Deserialize(serializeStr);
