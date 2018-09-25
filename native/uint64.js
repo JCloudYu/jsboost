@@ -5,7 +5,7 @@
 ((exports)=>{
 	"use strict";
 	
-	const _previous = exports.AsyncInvoke;
+	const _previous = exports.UInt64;
 	
 	// Detect NodeJS Buffer implementation
 	let BUFFER = null;
