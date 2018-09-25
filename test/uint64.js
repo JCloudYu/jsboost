@@ -23,8 +23,6 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.sub... " );
 	{
 		const ANSWER = [0xCAFA8000, 0x001FF973];
@@ -36,8 +34,6 @@
 			process.stdout.write( "passed!\n" );
 		}
 	}
-	
-	
 	
 	process.stdout.write( "    Testing UInt64.multiply... " );
 	{
@@ -51,8 +47,6 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.divide... " );
 	{
 		const ANSWER = [0x20000020, 0x00000000];
@@ -64,8 +58,6 @@
 			process.stdout.write( "passed!\n" );
 		}
 	}
-	
-	
 	
 	process.stdout.write( "    Testing UInt64.modulo... " );
 	{
@@ -94,12 +86,10 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.or... " );
 	{
 		const ANSWER = [0xFFFFFFFF, 0x001FFFFF];
-		const TEST	 = MAX.or(UInt64.Zero());
+		const TEST	 = MAX.or(UInt64.ZERO());
 		if ( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ) {
 			process.stdout.write( "failed!\n" );
 		}
@@ -107,8 +97,6 @@
 			process.stdout.write( "passed!\n" );
 		}
 	}
-	
-	
 	
 	process.stdout.write( "    Testing UInt64.not... " );
 	{
@@ -122,8 +110,6 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.xor... " );
 	{
 		const ANSWER = [0x00000000, 0x00000000];
@@ -135,8 +121,6 @@
 			process.stdout.write( "passed!\n" );
 		}
 	}
-	
-	
 	
 	process.stdout.write( "    Testing UInt64.rshift (8 bits)... " );
 	{
@@ -150,8 +134,6 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.rshift (40 bits)... " );
 	{
 		const ANSWER = [0x00001FFF, 0x00000000];
@@ -163,8 +145,6 @@
 			process.stdout.write( "passed!\n" );
 		}
 	}
-	
-	
 	
 	process.stdout.write( "    Testing UInt64.lshift (8 bits)... " );
 	{
@@ -178,8 +158,6 @@
 		}
 	}
 	
-	
-	
 	process.stdout.write( "    Testing UInt64.lshift (40 bits)... " );
 	{
 		const ANSWER = [0x00000000, 0xFFFFFF00];
@@ -190,5 +168,29 @@
 		else {
 			process.stdout.write( "passed!\n" );
 		}
+	}
+	
+	
+	
+	process.stdout.write( "\nTesting rendering operations...\n" );
+	process.stdout.write( "    Testing UInt64.toString()... " );
+	{
+		const ANSWER = "34567890000123456";
+		const TEST = UInt64.from(34567890000123456).toString();
+		process.stdout.write( (ANSWER !== TEST) ? "failed!\n" : "passed!\n" );
+	}
+	
+	process.stdout.write( "    Testing UInt64.toString(2)... " );
+	{
+		const ANSWER = "0000000000011111111111110000000000000000000000001111111111111111";
+		const TEST = UInt64.from(0x1FFF000000FFFF).toString(2);
+		process.stdout.write( (ANSWER !== TEST) ? "failed!\n" : "passed!\n" );
+	}
+	
+	process.stdout.write( "    Testing UInt64.toString(16)... " );
+	{
+		const ANSWER = "1fff000000ffff";
+		const TEST = UInt64.from(0x1FFF000000FFFF).toString(16);
+		process.stdout.write( (ANSWER !== TEST) ? "failed!\n" : "passed!\n" );
 	}
 })();

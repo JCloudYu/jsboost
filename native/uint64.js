@@ -18,6 +18,7 @@
 	const LO = 0, HI = 1;
 	const LEFT_MOST_32 = 0x80000000;
 	const OVERFLOW_MAX	= (0xFFFFFFFF >>> 0) + 1;
+	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);
 	
 	class UInt64 {
 		constructor(value=0){
@@ -139,9 +140,16 @@
 			switch( bits ) {
 				case 2:
 					return ___TO_BINARY_STRING(this._ta);
+				case 10:
+					return ___TO_DECIMAL_STRING(this._ta);
+				case 16:
+					return ___TO_HEX_STRING(this._ta);
 				default:
 					throw new TypeError( "Unexpected representation type" )
 			}
+		}
+		isZero() {
+			return ___IS_ZERO(this._ta);
 		}
 		
 		
@@ -177,6 +185,13 @@
 		}
 		
 		
+		static isZero(a) {
+			if (!(a instanceof UInt64)) {
+				a = UInt64.from(a);
+			}
+			
+			return a.isZero();
+		}
 		static compare(a, b) {
 			if (!(a instanceof UInt64)) {
 				a = UInt64.from(a);
@@ -184,16 +199,12 @@
 			
 			return a.compare(b);
 		}
+		
+		
 		static from(value=0) {
 			return new UInt64(value);
 		}
-		static noConflict() {
-			if ( _previous ) {
-				exports.UInt64 = _previous;
-			}
-			return exports.UInt64;
-		}
-		static Zero() {
+		static ZERO() {
 			return new UInt64();
 		}
 		static MAX_UINT64() {
@@ -201,6 +212,14 @@
 			val.hi = 0xFFFFFFFF;
 			val.lo = 0xFFFFFFFF;
 			return val;
+		}
+		
+		
+		static noConflict() {
+			if ( _previous ) {
+				exports.UInt64 = _previous;
+			}
+			return exports.UInt64;
 		}
 	}
 	exports.UInt64 = UInt64;
@@ -490,7 +509,35 @@
 	}
 	
 	/**
-	 * Return a binary representation of the given UInt64 number
+	 * Generate a 32bits mask
+	 * @param {Number} BITS
+	 * @private
+	 */
+	function ___GEN_MASK(BITS) {
+		if ( BITS > 32 ) BITS = 32;
+		if ( BITS < 0 ) BITS = 0;
+	
+		let val = 0;
+		while( BITS-- > 0 ) {
+			val = ((val << 1) | 1) >>> 0;
+		}
+		return val;
+	}
+	
+	/**
+	 * Check if given val is zero
+	 * @param {Uint32Array} val
+	 * @return {boolean}
+	 * @private
+	 */
+	function ___IS_ZERO(val) {
+		return (val[HI] === 0) && (val[LO] === 0);
+	}
+	
+	
+	
+	/**
+	 * Return binary representation of the given UInt64 number
 	 * @param {Uint32Array} val
 	 * @return {String}
 	 * @private
@@ -505,18 +552,57 @@
 	}
 	
 	/**
-	 * Generate a 32bits mask
-	 * @param {Number} BITS
+	 * Return hex representation of the given UInt64 number
+	 * @return {String}
 	 * @private
 	 */
-	function ___GEN_MASK(BITS) {
-		if ( BITS > 32 ) BITS = 32;
-		if ( BITS < 0 ) BITS = 0;
+	function ___TO_HEX_STRING(val) {
+		let hHex = val[HI].toString(16);
+		let lHex = val[LO].toString(16);
+		return ___PADDING_ZERO(hHex, 0) + ___PADDING_ZERO(lHex, 8);
+	}
 	
-		let val = 0;
-		while( BITS-- > 0 ) {
-			val = ((val << 1) | 1) >>> 0;
+	/**
+	 * Return decimal representation of the given UInt64 number
+	 * @return {String}
+	 * @private
+	 */
+	function ___TO_DECIMAL_STRING(val) {
+		let output = [];
+		
+		let remain = val.slice(0);
+		while ( !___IS_ZERO(remain) ) {
+			let quotient = ___DIVIDE(remain, DECIMAL_STEPPER);
+			output.unshift(remain[LO].toString(10));
+			remain = quotient;
 		}
-		return val;
+		
+		if ( output.length === 0 ) {
+			return '0';
+		}
+		else {
+			let o = output.shift();
+			for(let comp of output) {
+				o += ___PADDING_ZERO(comp, 9);
+			}
+			
+			return o;
+		}
+	}
+	
+	/**
+	 * Add padding zeros to the given string data
+	 * @param {string} data
+	 * @param {number} length
+	 * @private
+	 */
+	function ___PADDING_ZERO(data, length=8) {
+		let padding = length - data.length;
+		let padded = '';
+		while(padding-- > 0) {
+			padded += '0';
+		}
+		
+		return padded + data;
 	}
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
