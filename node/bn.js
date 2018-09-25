@@ -77,6 +77,8 @@
  *
  */
 
+	const MAGIC_STRING = "\u0000\u0018\u0001";
+
     let BigNumber,
         isNumeric = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i,
 
@@ -736,13 +738,16 @@
 
         /**
          * Deserialize BigNumber by object
-         * @param {Object} obj
-         * @param {number} obj.c
-         * @param {number} obj.e
-         * @param {number[]} obj.s
+         * @param {string} string
          * @return {BigNumber}
          */
-        BigNumber.deserialize = function (obj) {
+        BigNumber.deserialize = function (string) {
+        	if ( string.slice(0, 3) !== MAGIC_STRING ) {
+        		throw new TypeError( "Cannot parse the given serialized input!" );
+        	}
+        
+        	
+        	let obj = JSON.parse(base64urlDecode(string.slice(3)));
             let bn = new BigNumber();
 
             if (obj !== null && (typeof obj === 'object')) {
@@ -2667,13 +2672,12 @@
             return (n.s < 0) ? `-${str}` : str;
         };
 
-        // 07571 + base64url_string
-        P.toJSON = function () {
+        // 0 24 + type(1) + base64url_string
+        P.toJSON = P.serialize = function() {
             let bnStructure = Object.assign({}, this),
-                bnStr = base64urlEncode(Buffer.from(JSON.stringify(bnStructure))),
-                preStr = '\u0000\u0007\u0005\u0007\u0001';
+                bnStr = base64urlEncode(Buffer.from(JSON.stringify(bnStructure, Object.keys(bnStructure).sort())));
 
-            return preStr + bnStr;
+            return MAGIC_STRING + bnStr;
         };
 
         P._isBigNumber = true;
