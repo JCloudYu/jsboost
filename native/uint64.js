@@ -29,25 +29,51 @@
 	
 	
 	class UInt64 {
+		/**
+		 * UInt64 Constructor
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		**/
 		constructor(value=0){
 			this.value  = value;
 		}
 		
+		/**
+		 * Perform bit-wise right shift operation and return the result
+		 * @param {Number} bits shift distance
+		 * @returns {UInt64}
+		**/
 		rshift(bits) {
 			const newVal = UInt64.from(this);
 			___RIGHT_SHIFT(newVal._ta, bits);
 			return newVal;
 		}
+		
+		/**
+		 * Perform bit-wise left shift operation and return the result
+		 * @param {Number} bits shift distance
+		 * @returns {UInt64}
+		**/
 		lshift(bits) {
 			const newVal = UInt64.from(this);
 			___LEFT_SHIFT(newVal._ta, bits);
 			return newVal;
 		}
+		
+		/**
+		 * Perform bit-wise not operation and return the result
+		 * @returns {UInt64}
+		**/
 		not() {
 			const newVal = UInt64.from(this);
 			___NOT(newVal._ta);
 			return newVal;
 		}
+		
+		/**
+		 * Perform bit-wise or operation with the given value and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		or(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -59,6 +85,12 @@
 			___OR(newVal._ta, val);
 			return newVal;
 		}
+		
+		/**
+		 * Perform bit-wise and operation with the given value and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		and(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -70,6 +102,12 @@
 			___AND(newVal._ta, val);
 			return newVal;
 		}
+		
+		/**
+		 * Perform bit-wise xor operation with the given value and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		xor(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -82,7 +120,11 @@
 			return newVal;
 		}
 		
-		
+		/**
+		 * Add the instance with given value (UInt64 + value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		add(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -93,6 +135,12 @@
 			___ADD(newVal._ta, val);
 			return newVal;
 		}
+		
+		/**
+		 * Sub the instance with given value (UInt64 - value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		sub(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -103,7 +151,22 @@
 			___SUB(newVal._ta, val.slice(0));
 			return newVal;
 		}
+		
+		/**
+		 * Multiply the instance with given value (UInt64 * value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		multiply(value) {
+			return this.mul(value);
+		}
+		
+		/**
+		 * Multiply the instance with given value (UInt64 * value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
+		mul(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
 				throw new TypeError( "Given value is not a valid UInt64 format!" );
@@ -113,10 +176,22 @@
 			___MULTIPLY(newVal._ta, val);
 			return newVal;
 		}
-		mul(...args) {
-			return this.multiply(...args);
-		}
+		
+		/**
+		 * Divide the instance with given value (UInt64 / value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		divide(value) {
+			return this.div(value);
+		}
+		
+		/**
+		 * Divide the instance with given value (UInt64 / value) and return the result
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
+		div(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
 				throw new TypeError( "Given value is not a valid UInt64 format!" );
@@ -124,10 +199,22 @@
 			
 			return new UInt64(___DIVIDE(this._ta.slice(0), val.slice(0)));
 		}
-		div(...args) {
-			return this.divide(...args);
-		}
+		
+		/**
+		 * Divide the instance with given value (UInt64 / value) and return the modulo
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		modulo(value) {
+			return this.mod(value);
+		}
+		
+		/**
+		 * Divide the instance with given value (UInt64 / value) and return the modulo
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
+		mod(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
 				throw new TypeError( "Given value is not a valid UInt64 format!" );
@@ -138,6 +225,11 @@
 			return newVal;
 		}
 		
+		/**
+		 * Compare the instance with given value
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {number} returns 1 if UInt32 > value, -1 if UInt32 < value, 0 otherwise
+		**/
 		compare(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -146,10 +238,19 @@
 			
 			return ___COMPARE(this._ta, val);
 		}
+		
+		/**
+		 * A short hand function that tells whether the instance equals zero
+		 * @returns {boolean}
+		**/
 		isZero() {
 			return ___IS_ZERO(this._ta);
 		}
 		
+		/**
+		 * Serialize the instance
+		 * @returns {string}
+		**/
 		serialize() {
 			const resultBuff = new Uint8Array(this._ta.buffer);
 			let tail = [0, 0, 0, 0], str = MAGIC_STRING;
@@ -180,6 +281,12 @@
 			
 			return str;
 		}
+		
+		/**
+		 * Render the instance into printable string representation
+		 * @param {number} bits The representation format
+		 * @returns {string}
+		**/
 		toString(bits=10) {
 			switch( bits ) {
 				case 2:
@@ -192,6 +299,10 @@
 					throw new TypeError( "Unexpected representation type" )
 			}
 		}
+		
+		/**
+		 * @alias UInt64.serialize
+		**/
 		toJSON() {
 			return this.serialize();
 		}
@@ -229,6 +340,11 @@
 		}
 		
 		
+		/**
+		 * Deserialize a serialized data and return the corresponding UInt64 instance
+		 * @param {string} serialized_str The serialized UInt64 data
+		 * @returns {UInt64}
+		**/
 		static deserialize(serialized_str) {
 			if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING ) {
 				throw new TypeError( "The input serialized string is invalid!" );
@@ -256,12 +372,28 @@
 			
 			return UInt64.from(recovered.buffer);
 		}
+		
+		/**
+		 * Instantiate a UInt64 base on input value
+		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @returns {UInt64}
+		**/
 		static from(value=0) {
 			return new UInt64(value);
 		}
+		
+		/**
+		 * Return an UInt64 instance with value 0
+		 * @returns {UInt64}
+		**/
 		static ZERO() {
 			return new UInt64();
 		}
+		
+		/**
+		 * Return an UInt64 instance with value 0xFFFFFFFFFFFFFFFF
+		 * @returns {UInt64}
+		**/
 		static MAX_UINT64() {
 			const val = new UInt64();
 			val.hi = 0xFFFFFFFF;
@@ -269,7 +401,10 @@
 			return val;
 		}
 		
-		
+		/**
+		 * Revert to previous version...
+		 * @returns {UInt64}
+		**/
 		static noConflict() {
 			if ( _previous ) {
 				exports.UInt64 = _previous;
@@ -287,7 +422,7 @@
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
 	 * @private
-	 */
+	**/
 	function ___AND(a, b) {
 		a[HI] = (a[HI] & b[HI])>>>0;
 		a[LO] = (a[LO] & b[LO])>>>0;
@@ -298,7 +433,7 @@
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
 	 * @private
-	 */
+	**/
 	function ___OR(a, b) {
 		a[HI] = (a[HI] | b[HI])>>>0;
 		a[LO] = (a[LO] | b[LO])>>>0;
@@ -309,7 +444,7 @@
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
 	 * @private
-	 */
+	**/
 	function ___XOR(a, b) {
 		a[HI] = (a[HI] ^ b[HI])>>>0;
 		a[LO] = (a[LO] ^ b[LO])>>>0;
@@ -319,7 +454,7 @@
 	 * A mutable operation that perform bitwise not to the given UInt64 value
 	 * @param {Uint32Array} value
 	 * @private
-	 */
+	**/
 	function ___NOT(value) {
 		value[HI] = (~value[HI])>>>0;
 		value[LO] = (~value[LO])>>>0;
@@ -331,7 +466,7 @@
 	 * @param {Uint32Array} value
 	 * @param {Number} BITS
 	 * @private
-	 */
+	**/
 	function ___RIGHT_SHIFT(value, BITS) {
 		if ( typeof BITS !== "number" ) {
 			throw new TypeError( "Shift bits number must be a number" );
@@ -363,7 +498,7 @@
 	 * @param {Uint32Array} value
 	 * @param {Number} BITS
 	 * @private
-	 */
+	**/
 	function ___LEFT_SHIFT(value, BITS) {
 		if ( typeof BITS !== "number" ) {
 			throw new TypeError( "Shift bits number must be a number" );
@@ -396,7 +531,7 @@
 	 * @param {Uint32Array} b
 	 * @param {Number} _v
 	 * @private
-	 */
+	**/
 	function ___ADD(a, b, _v=0) {
 		let temp = b[LO] + a[LO] + _v;
 		a[HI] = (b[HI] + a[HI]) + (temp / OVERFLOW_MAX);
@@ -408,7 +543,7 @@
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
 	 * @private
-	 */
+	**/
 	function ___MULTIPLY(a, b) {
 		let temp = a[LO] * b[LO];
 		a[HI] = a[LO] * b[HI] + a[HI] * b[LO] + (temp / OVERFLOW_MAX);
@@ -421,7 +556,7 @@
 	 * @param {Uint32Array} b
 	 * @return {Uint32Array}
 	 * @private
-	 */
+	**/
 	function ___DIVIDE(a, b) {
 		const quotient	= new Uint32Array(2);
 		if ( ___COMPARE(a, b) < 0 ) {
@@ -479,7 +614,7 @@
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
 	 * @private
-	 */
+	**/
 	function ___SUB(a, b) {
 		___NOT(b);
 		___ADD(a, b, 1);
@@ -492,7 +627,7 @@
 	 * @param {Uint32Array} val
 	 * @return {boolean}
 	 * @private
-	 */
+	**/
 	function ___IS_ZERO(val) {
 		return (val[HI] === 0) && (val[LO] === 0);
 	}
@@ -503,7 +638,7 @@
 	 * @param {Uint32Array} b
 	 * @return {Number}
 	 * @private
-	 */
+	**/
 	function ___COMPARE(a, b) {
 		if ( a[HI] < b[HI] ) {
 			return -1;
@@ -532,7 +667,7 @@
 	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer} value
 	 * @returns {Uint32Array}
 	 * @private
-	 */
+	**/
 	function ___UNPACK(value) {
 		if ( value instanceof UInt64 ) {
 			return value._ta;
@@ -586,7 +721,7 @@
 	 * Generate a 32bits mask
 	 * @param {Number} BITS
 	 * @private
-	 */
+	**/
 	function ___GEN_MASK(BITS) {
 		if ( BITS > 32 ) BITS = 32;
 		if ( BITS < 0 ) BITS = 0;
@@ -603,7 +738,7 @@
 	 * @param {Uint32Array} val
 	 * @return {String}
 	 * @private
-	 */
+	**/
 	function ___TO_BINARY_STRING(val) {
 		let count = 0, str = '', copy = val.slice(0);
 		while(count++ < 64) {
@@ -617,7 +752,7 @@
 	 * Return hex representation of the given UInt64 number
 	 * @return {String}
 	 * @private
-	 */
+	**/
 	function ___TO_HEX_STRING(val) {
 		let hHex = val[HI].toString(16);
 		let lHex = val[LO].toString(16);
@@ -628,7 +763,7 @@
 	 * Return decimal representation of the given UInt64 number
 	 * @return {String}
 	 * @private
-	 */
+	**/
 	function ___TO_DECIMAL_STRING(val) {
 		let output = [];
 		
@@ -657,7 +792,7 @@
 	 * @param {string} data
 	 * @param {number} length
 	 * @private
-	 */
+	**/
 	function ___PADDING_ZERO(data, length=8) {
 		let padding = length - data.length;
 		let padded = '';
