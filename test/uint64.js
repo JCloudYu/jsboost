@@ -193,4 +193,13 @@
 		const TEST = UInt64.from(0x1FFF000000FFFF).toString(16);
 		process.stdout.write( (ANSWER !== TEST) ? "failed!\n" : "passed!\n" );
 	}
+	
+	
+	
+	process.stdout.write( "\nTesting serialization... " );
+	{
+		const INPUT = JSON.stringify(MAX.serialize());
+		const TEST	= UInt64.deserialize(JSON.parse(INPUT));
+		process.stdout.write( (MAX.compare(TEST) !== 0) ? "failed!\n" : "passed!\n" );
+	}
 })();

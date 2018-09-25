@@ -19,11 +19,13 @@
 	const LEFT_MOST_32 = 0x80000000;
 	const OVERFLOW_MAX	= (0xFFFFFFFF >>> 0) + 1;
 	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);
+	const MAGIC_STRING = "\u0000\u00A4\u0002\u0000";
 	
 	class UInt64 {
 		constructor(value=0){
 			this.value  = value;
 		}
+		
 		rshift(bits) {
 			const newVal = UInt64.from(this);
 			___RIGHT_SHIFT(newVal._ta, bits);
@@ -128,6 +130,7 @@
 			___DIVIDE(newVal._ta, val.slice(0));
 			return newVal;
 		}
+		
 		compare(value) {
 			const val = ___UNPACK(value);
 			if ( val === null ) {
@@ -135,6 +138,35 @@
 			}
 			
 			return ___COMPARE(this._ta, val);
+		}
+		isZero() {
+			return ___IS_ZERO(this._ta);
+		}
+		
+		serialize() {
+			const resultBuff = new Uint8Array(this._ta.buffer);
+			let trail1 = 0, trail2 = 0, str = MAGIC_STRING;
+			str += String.fromCodePoint(resultBuff[0] >>> 1);
+			trail1 = (trail1 | (resultBuff[0] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[1] >>> 1);
+			trail1 = (trail1 | (resultBuff[1] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[2] >>> 1);
+			trail1 = (trail1 | (resultBuff[2] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[3] >>> 1);
+			trail1 = trail1 | (resultBuff[3] & 0x01)
+			
+			str += String.fromCodePoint(resultBuff[4] >>> 1);
+			trail2 = (trail2 | (resultBuff[4] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[5] >>> 1);
+			trail2 = (trail2 | (resultBuff[5] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[6] >>> 1);
+			trail2 = (trail2 | (resultBuff[6] & 0x01)) << 1;
+			str += String.fromCodePoint(resultBuff[7] >>> 1);
+			trail2 = trail2 | (resultBuff[7] & 0x01);
+			
+			str += String.fromCodePoint(trail1|((Math.random()*16)<<4));
+			str += String.fromCodePoint(trail2|((Math.random()*16)<<4));
+			return str;
 		}
 		toString(bits=10) {
 			switch( bits ) {
@@ -148,8 +180,8 @@
 					throw new TypeError( "Unexpected representation type" )
 			}
 		}
-		isZero() {
-			return ___IS_ZERO(this._ta);
+		toJSON() {
+			return this.serialize();
 		}
 		
 		
@@ -201,6 +233,27 @@
 		}
 		
 		
+		static deserialize(serialized_str) {
+			if ( serialized_str.length !== 14 && serialized_str.slice(0, 4) !== MAGIC_STRING ) {
+				throw new TypeError( "The input serialized string is invalid!" );
+			}
+			
+			const recovered = new Uint8Array(8);
+			const trail1 =  serialized_str.codePointAt(12) & 0x0F;
+			const trail2 =  serialized_str.codePointAt(13) & 0x0F;
+			
+			recovered[0] = (serialized_str.codePointAt( 4) << 1)|((trail1>>3) & 0x01);
+			recovered[1] = (serialized_str.codePointAt( 5) << 1)|((trail1>>2) & 0x01);
+			recovered[2] = (serialized_str.codePointAt( 6) << 1)|((trail1>>1) & 0x01);
+			recovered[3] = (serialized_str.codePointAt( 7) << 1)|(trail1 & 0x01);
+			
+			recovered[4] = (serialized_str.codePointAt( 8) << 1)|((trail2>>3) & 0x01);
+			recovered[5] = (serialized_str.codePointAt( 9) << 1)|((trail2>>2) & 0x01);
+			recovered[6] = (serialized_str.codePointAt(10) << 1)|((trail2>>1) & 0x01);
+			recovered[7] = (serialized_str.codePointAt(11) << 1)|(trail2 & 0x01);
+			
+			return UInt64.from(recovered.buffer);
+		}
 		static from(value=0) {
 			return new UInt64(value);
 		}
@@ -243,10 +296,7 @@
 			return array;
 		}
 		if ( value instanceof ArrayBuffer ) {
-			const array = new Uint32Array(value);
-			array[LO] = value[LO] || 0;
-			array[HI] = value[HI] || 0;
-			return array;
+			return new Uint32Array(value);
 		}
 		if ( BUFFER && value instanceof BUFFER ) {
 			const buff	= new ArrayBuffer(8);
@@ -260,7 +310,7 @@
 		
 		const type = typeof value;
 		const buff = new ArrayBuffer(8);
-		const u32 = new Uint32Array(buff);
+		const u32  = new Uint32Array(buff);
 		switch( type ) {
 			case "number":
 			{
