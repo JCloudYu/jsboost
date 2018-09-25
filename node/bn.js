@@ -2820,6 +2820,7 @@
 	function ___UNPACK(value) {
 
 		if (value instanceof UInt64) {
+            // (hi * 2^32) + li
             let base = new BigNumber(2).pow(32);
 			return new BigNumber(value.hi).mul(base).add(value.lo);
 		}
