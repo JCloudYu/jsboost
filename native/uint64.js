@@ -19,7 +19,11 @@
 	const LEFT_MOST_32 = 0x80000000;
 	const OVERFLOW_MAX	= (0xFFFFFFFF >>> 0) + 1;
 	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);
-	const MAGIC_STRING = "\u0000\u00A4\u0002\u0000";
+	const MAGIC_STRING = "\u0000\u0018\u0002\u000C";
+	const SERIALIZE_MAP = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+//	const SERIALIZE_MAP = "lqNOoVX_vMhSQZzFkRP51n3x8m6HJd-T9Bg0EapysGY7twLruCf4cjieKbUWI2DA".split('');
+	const SERIALIZE_MAP_R = {};
+	for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 	
 	class UInt64 {
 		constructor(value=0){
@@ -145,27 +149,32 @@
 		
 		serialize() {
 			const resultBuff = new Uint8Array(this._ta.buffer);
-			let trail1 = 0, trail2 = 0, str = MAGIC_STRING;
-			str += String.fromCodePoint(resultBuff[0] >>> 1);
-			trail1 = (trail1 | (resultBuff[0] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[1] >>> 1);
-			trail1 = (trail1 | (resultBuff[1] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[2] >>> 1);
-			trail1 = (trail1 | (resultBuff[2] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[3] >>> 1);
-			trail1 = trail1 | (resultBuff[3] & 0x01)
+			let tail = [0, 0, 0, 0], str = MAGIC_STRING;
+			str += SERIALIZE_MAP[resultBuff[0] >>> 2];
+			tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
+			str += SERIALIZE_MAP[resultBuff[1] >>> 2];
+			tail[0] =  tail[0] | (resultBuff[1] & 0x03);
 			
-			str += String.fromCodePoint(resultBuff[4] >>> 1);
-			trail2 = (trail2 | (resultBuff[4] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[5] >>> 1);
-			trail2 = (trail2 | (resultBuff[5] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[6] >>> 1);
-			trail2 = (trail2 | (resultBuff[6] & 0x01)) << 1;
-			str += String.fromCodePoint(resultBuff[7] >>> 1);
-			trail2 = trail2 | (resultBuff[7] & 0x01);
+			str += SERIALIZE_MAP[resultBuff[2] >>> 2];
+			tail[1] = (tail[1] | (resultBuff[2] & 0x03)) << 2;
+			str += SERIALIZE_MAP[resultBuff[3] >>> 2];
+			tail[1] =  tail[1] | (resultBuff[3] & 0x03);
 			
-			str += String.fromCodePoint(trail1|((Math.random()*16)<<4));
-			str += String.fromCodePoint(trail2|((Math.random()*16)<<4));
+			str += SERIALIZE_MAP[resultBuff[4] >>> 2];
+			tail[2] = (tail[2] | (resultBuff[4] & 0x03)) << 2;
+			str += SERIALIZE_MAP[resultBuff[5] >>> 2];
+			tail[2] =  tail[2] | (resultBuff[5] & 0x03);
+			
+			str += SERIALIZE_MAP[resultBuff[6] >>> 2];
+			tail[3] = (tail[3] | (resultBuff[6] & 0x03)) << 2;
+			str += SERIALIZE_MAP[resultBuff[7] >>> 2];
+			tail[3] =  tail[3] | (resultBuff[7] & 0x03);
+			
+			str += SERIALIZE_MAP[tail[0]];
+			str += SERIALIZE_MAP[tail[1]];
+			str += SERIALIZE_MAP[tail[2]];
+			str += SERIALIZE_MAP[tail[3]];
+			
 			return str;
 		}
 		toString(bits=10) {
@@ -217,40 +226,30 @@
 		}
 		
 		
-		static isZero(a) {
-			if (!(a instanceof UInt64)) {
-				a = UInt64.from(a);
-			}
-			
-			return a.isZero();
-		}
-		static compare(a, b) {
-			if (!(a instanceof UInt64)) {
-				a = UInt64.from(a);
-			}
-			
-			return a.compare(b);
-		}
-		
-		
 		static deserialize(serialized_str) {
-			if ( serialized_str.length !== 14 && serialized_str.slice(0, 4) !== MAGIC_STRING ) {
+			if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING ) {
 				throw new TypeError( "The input serialized string is invalid!" );
 			}
 			
 			const recovered = new Uint8Array(8);
-			const trail1 =  serialized_str.codePointAt(12) & 0x0F;
-			const trail2 =  serialized_str.codePointAt(13) & 0x0F;
+			const tail = [
+				SERIALIZE_MAP_R[serialized_str[12]],
+				SERIALIZE_MAP_R[serialized_str[13]],
+				SERIALIZE_MAP_R[serialized_str[14]],
+				SERIALIZE_MAP_R[serialized_str[15]]
+			];
 			
-			recovered[0] = (serialized_str.codePointAt( 4) << 1)|((trail1>>3) & 0x01);
-			recovered[1] = (serialized_str.codePointAt( 5) << 1)|((trail1>>2) & 0x01);
-			recovered[2] = (serialized_str.codePointAt( 6) << 1)|((trail1>>1) & 0x01);
-			recovered[3] = (serialized_str.codePointAt( 7) << 1)|(trail1 & 0x01);
+			recovered[0] = (SERIALIZE_MAP_R[serialized_str[ 4]] << 2)|((tail[0]>>2) & 0x03);
+			recovered[1] = (SERIALIZE_MAP_R[serialized_str[ 5]] << 2)|( tail[0]     & 0x03);
 			
-			recovered[4] = (serialized_str.codePointAt( 8) << 1)|((trail2>>3) & 0x01);
-			recovered[5] = (serialized_str.codePointAt( 9) << 1)|((trail2>>2) & 0x01);
-			recovered[6] = (serialized_str.codePointAt(10) << 1)|((trail2>>1) & 0x01);
-			recovered[7] = (serialized_str.codePointAt(11) << 1)|(trail2 & 0x01);
+			recovered[2] = (SERIALIZE_MAP_R[serialized_str[ 6]] << 2)|((tail[1]>>2) & 0x03);
+			recovered[3] = (SERIALIZE_MAP_R[serialized_str[ 7]] << 2)|( tail[1]     & 0x03);
+		
+			recovered[4] = (SERIALIZE_MAP_R[serialized_str[ 8]] << 2)|((tail[2]>>2) & 0x03);
+			recovered[5] = (SERIALIZE_MAP_R[serialized_str[ 9]] << 2)|( tail[2]     & 0x03);
+			
+			recovered[6] = (SERIALIZE_MAP_R[serialized_str[10]] << 2)|((tail[3]>>2) & 0x03);
+			recovered[7] = (SERIALIZE_MAP_R[serialized_str[11]] << 2)|( tail[3]     & 0x03);
 			
 			return UInt64.from(recovered.buffer);
 		}
