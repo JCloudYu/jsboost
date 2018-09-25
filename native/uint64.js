@@ -7,14 +7,14 @@
 	
 	const _previous = exports.UInt64;
 	
-	// Detect NodeJS Buffer implementation
+	// region [ Detect NodeJS Buffer implementation ]
 	let BUFFER = null;
 	if ( typeof Buffer !== "undefined" ) {
 		BUFFER = Buffer;
 	}
+	// endregion
 	
-	
-	
+	// region [ Internal constants ]
 	const LO = 0, HI = 1;
 	const LEFT_MOST_32 = 0x80000000;
 	const OVERFLOW_MAX	= (0xFFFFFFFF >>> 0) + 1;
@@ -24,6 +24,9 @@
 //	const SERIALIZE_MAP = "lqNOoVX_vMhSQZzFkRP51n3x8m6HJd-T9Bg0EapysGY7twLruCf4cjieKbUWI2DA".split('');
 	const SERIALIZE_MAP_R = {};
 	for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
+	// endregion
+	
+	
 	
 	class UInt64 {
 		constructor(value=0){
@@ -278,61 +281,7 @@
 	
 	
 	
-	/**
-	 * Get raw Uint32Array values converted from source value
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer} value
-	 * @returns {Uint32Array}
-	 * @private
-	 */
-	function ___UNPACK(value) {
-		if ( value instanceof UInt64 ) {
-			return value._ta;
-		}
-		if ( value instanceof Uint32Array ) {
-			const array = new Uint32Array(2);
-			array[LO] = value[LO] || 0;
-			array[HI] = value[HI] || 0;
-			return array;
-		}
-		if ( value instanceof ArrayBuffer ) {
-			return new Uint32Array(value);
-		}
-		if ( BUFFER && value instanceof BUFFER ) {
-			const buff	= new ArrayBuffer(8);
-			const uint8 = new Uint8Array(buff);
-			for ( let i=0; i<8; i++ ) {
-				uint8[i] = buff[i]||0;
-			}
-			
-			return new Uint32Array(buff);
-		}
-		
-		// UInt64 represented with UInt32 values, little-endian
-		if ( Array.isArray(value) ) {
-			return new Uint32Array(value);
-		}
-		
-		const type = typeof value;
-		const buff = new ArrayBuffer(8);
-		const u32  = new Uint32Array(buff);
-		switch( type ) {
-			case "number":
-			{
-				value = Math.floor(value);
-				u32[LO] = value % OVERFLOW_MAX;
-				value = Math.floor(value / OVERFLOW_MAX);
-				u32[HI] = value % OVERFLOW_MAX;
-				break;
-			}
-			
-			case "string":
-			default:
-				return null;
-		}
-		
-		return u32;
-	}
-	
+	// region [ Helper functions for binary operations ]
 	/**
 	 * A mutable operation that perform bitwise and between two UInt64 value
 	 * @param {Uint32Array} a
@@ -438,35 +387,9 @@
 		value[HI] = (value[LO] << BITS) >>> 0;
 		value[LO] = 0;
 	}
+	// endregion
 	
-	/**
-	 * Compare two UInt64 values return -1 if a < b, 1 if a > b, 0 otherwise
-	 * @param {Uint32Array} a
-	 * @param {Uint32Array} b
-	 * @return {Number}
-	 * @private
-	 */
-	function ___COMPARE(a, b) {
-		if ( a[HI] < b[HI] ) {
-			return -1;
-		}
-		else
-		if( a[HI] > b[HI] ) {
-			return 1;
-		}
-		else
-		if ( a[LO] < b[LO] ) {
-			return -1;
-		}
-		else
-		if (a[LO] > b[LO] ) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
-	}
-	
+	// region [ Helper functions for arithmetic operations ]
 	/**
 	 * Perform UInt64 a + b and write the result back to a
 	 * @param {Uint32Array} a
@@ -561,6 +484,103 @@
 		___NOT(b);
 		___ADD(a, b, 1);
 	}
+	// endregion
+	
+	// region [ Helper functions for comparison ]
+	/**
+	 * Check if given val is zero
+	 * @param {Uint32Array} val
+	 * @return {boolean}
+	 * @private
+	 */
+	function ___IS_ZERO(val) {
+		return (val[HI] === 0) && (val[LO] === 0);
+	}
+	
+	/**
+	 * Compare two UInt64 values return -1 if a < b, 1 if a > b, 0 otherwise
+	 * @param {Uint32Array} a
+	 * @param {Uint32Array} b
+	 * @return {Number}
+	 * @private
+	 */
+	function ___COMPARE(a, b) {
+		if ( a[HI] < b[HI] ) {
+			return -1;
+		}
+		else
+		if( a[HI] > b[HI] ) {
+			return 1;
+		}
+		else
+		if ( a[LO] < b[LO] ) {
+			return -1;
+		}
+		else
+		if (a[LO] > b[LO] ) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
+	}
+	// endregion
+	
+	// region [ Miscellaneous helper functions ]
+	/**
+	 * Get raw Uint32Array values converted from source value
+	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer} value
+	 * @returns {Uint32Array}
+	 * @private
+	 */
+	function ___UNPACK(value) {
+		if ( value instanceof UInt64 ) {
+			return value._ta;
+		}
+		if ( value instanceof Uint32Array ) {
+			const array = new Uint32Array(2);
+			array[LO] = value[LO] || 0;
+			array[HI] = value[HI] || 0;
+			return array;
+		}
+		if ( value instanceof ArrayBuffer ) {
+			return new Uint32Array(value);
+		}
+		if ( BUFFER && value instanceof BUFFER ) {
+			const buff	= new ArrayBuffer(8);
+			const uint8 = new Uint8Array(buff);
+			for ( let i=0; i<8; i++ ) {
+				uint8[i] = buff[i]||0;
+			}
+			
+			return new Uint32Array(buff);
+		}
+		
+		// UInt64 represented with UInt32 values, little-endian
+		if ( Array.isArray(value) ) {
+			return new Uint32Array(value);
+		}
+		
+		const type = typeof value;
+		const buff = new ArrayBuffer(8);
+		const u32  = new Uint32Array(buff);
+		switch( type ) {
+			case "number":
+			{
+				value = Math.floor(value);
+				u32[LO] = value % OVERFLOW_MAX;
+				value = Math.floor(value / OVERFLOW_MAX);
+				u32[HI] = value % OVERFLOW_MAX;
+				break;
+			}
+			
+			case "string":
+			default:
+				return null;
+		}
+		
+		return u32;
+	}
 	
 	/**
 	 * Generate a 32bits mask
@@ -577,18 +597,6 @@
 		}
 		return val;
 	}
-	
-	/**
-	 * Check if given val is zero
-	 * @param {Uint32Array} val
-	 * @return {boolean}
-	 * @private
-	 */
-	function ___IS_ZERO(val) {
-		return (val[HI] === 0) && (val[LO] === 0);
-	}
-	
-	
 	
 	/**
 	 * Return binary representation of the given UInt64 number
@@ -659,4 +667,5 @@
 		
 		return padded + data;
 	}
+	// endregion
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
