@@ -14,11 +14,13 @@ if ( typeof Buffer !== "undefined" ) {
 
 // region [ Internal constants ]
 const LO = 0, HI = 1;
-const LEFT_MOST_32 = 0x80000000;
-const OVERFLOW_MAX	= (0xFFFFFFFF >>> 0) + 1;
+const LEFT_MOST_32    = 0x80000000;
+const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
+const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
 const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);
 const MAGIC_STRING = "\u0000\u0018\u0002\u000C";
 const SERIALIZE_MAP = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+//	const SERIALIZE_MAP = "lqNOoVX_vMhSQZzFkRP51n3x8m6HJd-T9Bg0EapysGY7twLruCf4cjieKbUWI2DA".split('');
 const SERIALIZE_MAP_R = {};
 for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 // endregion
@@ -520,8 +522,8 @@ function ___LEFT_SHIFT(value, BITS) {
 **/
 function ___ADD(a, b, _v=0) {
 	let temp = b[LO] + a[LO] + _v;
-	a[HI] = (b[HI] + a[HI]) + (temp / OVERFLOW_MAX);
-	a[LO] = temp % OVERFLOW_MAX;
+	a[HI] = (b[HI] + a[HI]) + ((temp/OVERFLOW32_MAX)|0);
+	a[LO] = temp % OVERFLOW32_MAX;
 }
 
 /**
@@ -531,9 +533,19 @@ function ___ADD(a, b, _v=0) {
  * @private
 **/
 function ___MULTIPLY(a, b) {
-	let temp = a[LO] * b[LO];
-	a[HI] = a[LO] * b[HI] + a[HI] * b[LO] + (temp / OVERFLOW_MAX);
-	a[LO] = temp % OVERFLOW_MAX;
+	let FINAL = new Uint16Array(a.buffer);
+	let A = new Uint16Array(a.buffer.slice(0));
+	let B = new Uint16Array(b.buffer);
+	
+	let overflow = 0;
+	for ( let i=0; i<8; i++ ) {
+		let val = overflow;
+		for ( let j=i; j>=0; j-- ) {
+			val += A[j] * B[i-j];
+		}
+		overflow = (val / OVERFLOW16_MAX) | 0;
+		FINAL[i] = val % OVERFLOW16_MAX;
+	}
 }
 
 /**
@@ -688,10 +700,20 @@ function ___UNPACK(value) {
 	switch( type ) {
 		case "number":
 		{
+			let negate = value < 0;
+			if ( negate ) {
+				value = Math.abs(value);
+			}
+			
 			value = Math.floor(value);
-			u32[LO] = value % OVERFLOW_MAX;
-			value = Math.floor(value / OVERFLOW_MAX);
-			u32[HI] = value % OVERFLOW_MAX;
+			u32[LO] = value % OVERFLOW32_MAX;
+			value = Math.floor(value / OVERFLOW32_MAX);
+			u32[HI] = value % OVERFLOW32_MAX;
+			
+			if ( negate ) {
+				___NOT(u32);
+				___ADD(u32, new Uint32Array([0x0, 0x0]), 1);
+			}
 			break;
 		}
 		
