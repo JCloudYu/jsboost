@@ -382,11 +382,12 @@
 			return new UInt64(value);
 		}
 		
+		
 		/**
 		 * Return an UInt64 instance with value 0
 		 * @returns {UInt64}
 		**/
-		static ZERO() {
+		static get ZERO() {
 			return new UInt64();
 		}
 		
@@ -394,7 +395,7 @@
 		 * Return an UInt64 instance with value 0xFFFFFFFFFFFFFFFF
 		 * @returns {UInt64}
 		**/
-		static MAX_UINT64() {
+		static get MAX_UINT64() {
 			const val = new UInt64();
 			val.hi = 0xFFFFFFFF;
 			val.lo = 0xFFFFFFFF;

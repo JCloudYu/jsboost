@@ -5,3 +5,4 @@
 export {EventEmitter} from "./native/event-emitter.esm.js";
 export {DOMEventEmitter} from "./native/dom-event-emitter.esm.js";
 export {AsyncInvoke} from "./native/async-invoke.esm.js";
+export {UInt64} from "./native/uint64.esm.js";

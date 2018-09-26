@@ -7,7 +7,7 @@
 	
 	const {UInt64} = require( '../jsboost' );
 	const MAX = UInt64.from(Number.MAX_SAFE_INTEGER);
-	const MAX_UINT64 = UInt64.MAX_UINT64();
+	const MAX_UINT64 = UInt64.MAX_UINT64;
 	
 	
 	process.stdout.write( "Testing arithmetic operations...\n" );
@@ -89,7 +89,7 @@
 	process.stdout.write( "    Testing UInt64.or... " );
 	{
 		const ANSWER = [0xFFFFFFFF, 0x001FFFFF];
-		const TEST	 = MAX.or(UInt64.ZERO());
+		const TEST	 = MAX.or(UInt64.ZERO);
 		if ( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ) {
 			process.stdout.write( "failed!\n" );
 		}
