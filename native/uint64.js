@@ -149,7 +149,7 @@
 			}
 			
 			const newVal = new UInt64(this);
-			___SUB(newVal._ta, val.slice(0));
+			___SUB(newVal._ta, val);
 			return newVal;
 		}
 		
@@ -461,6 +461,19 @@
 		value[HI] = (~value[HI])>>>0;
 		value[LO] = (~value[LO])>>>0;
 	}
+	
+	/**
+	 * A mutable operation that perform bitwise two's compliment to the given UInt64 value
+	 * @param {Uint32Array} value
+	 * @private
+	**/
+	function ___TWO_S_COMPLIMENT(value) {
+		value[HI] = (~value[HI])>>>0;
+		value[LO] = (~value[LO])>>>0;
+		let temp = value[LO] + 1;
+		value[HI] += ((temp / OVERFLOW32_MAX)|0);
+		value[LO]  =   temp % OVERFLOW32_MAX;
+	}
 
 	/**
 	 * A mutable operation that shifts the bits right.
@@ -531,11 +544,10 @@
 	 * Perform UInt64 a + b and write the result back to a
 	 * @param {Uint32Array} a
 	 * @param {Uint32Array} b
-	 * @param {Number} _v
 	 * @private
 	**/
-	function ___ADD(a, b, _v=0) {
-		let temp = b[LO] + a[LO] + _v;
+	function ___ADD(a, b) {
+		let temp = b[LO] + a[LO];
 		a[HI] = (b[HI] + a[HI]) + ((temp/OVERFLOW32_MAX)|0);
 		a[LO] = temp % OVERFLOW32_MAX;
 	}
@@ -610,7 +622,7 @@
 				___LEFT_SHIFT(quotient, 1);
 			}
 			else {
-				___SUB(remainder, b.slice(0));
+				___SUB(remainder, b);
 				quotient[LO] = quotient[LO] | 0x01;
 				___LEFT_SHIFT(quotient, 1);
 			}
@@ -628,8 +640,9 @@
 	 * @private
 	**/
 	function ___SUB(a, b) {
-		___NOT(b);
-		___ADD(a, b, 1);
+		let B = b.slice(0);
+		___TWO_S_COMPLIMENT(B);
+		___ADD(a, B);
 	}
 	// endregion
 	
@@ -725,8 +738,7 @@
 				u32[HI] = value % OVERFLOW32_MAX;
 				
 				if ( negate ) {
-					___NOT(u32);
-					___ADD(u32, new Uint32Array([0x0, 0x0]), 1);
+					___TWO_S_COMPLIMENT(u32);
 				}
 				break;
 			}
