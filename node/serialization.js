@@ -48,6 +48,8 @@
 			
 			// int64
 			case 3:
+				return UInt64.deserialize(value);
+			
 			default:
 				return value;
 		}
