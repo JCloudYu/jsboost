@@ -1,7 +1,7 @@
 (() => {
 	'use strict';
 
-	const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');
+	const {UInt64}	= require( '../native/uint64' );
 	const BigNumber = require('./bn');
 
 	module.exports = {
@@ -18,33 +18,29 @@
 	
 	
 	
-	const MAGIC_STRING = "\u0000\u0007\u0005\u0007";
+	const MAGIC_STRING = "\u0000\u0018";
 	function ___JSON_PARSE_RECEIVER(key, value) {
-		if (typeof value !== 'string') {
+		if ( typeof value !== 'string' || value.slice(0, 2) !== MAGIC_STRING ) {
 			return value;
 		}
 
-		let result = value;
-		if (value.slice(0, 4) === MAGIC_STRING) {
-			let type = value.charCodeAt(4);
-			switch(type) {
-				// big number
-				case 1:
-					let bnStructure = JSON.parse(base64urlDecode(value.slice(5)));
-					result = BigNumber.deserialize(bnStructure);
-				break;
 
-				// uint64
-				case 2:
-				// int64
-				case 3:
-				default:
-					result = value.slice(5);
-				break;
-			}
+
+		let type = value.charCodeAt(2);
+		switch(type) {
+			// BigNumber
+			case 1:
+				return BigNumber.deserialize(value);
+
+			// UInt64
+			case 2:
+				return UInt64.deserialize(value);
+			
+			// int64
+			case 3:
+			default:
+				return value;
 		}
-
-		return result;
 	}
 	function ___NESTED_DUMP_OBJECT_KEYS(obj, container=null) {
 		if ( Object(obj) !== obj ) { return []; }
