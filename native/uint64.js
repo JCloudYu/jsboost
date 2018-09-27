@@ -16,16 +16,19 @@
 	// endregion
 	
 	// region [ Internal constants ]
+	const MAGIC_STRING_UINT64 = "\u0000\u0018\u0002\u000C";
+	const MAGIC_STRING_INT64  = "\u0000\u0018\u0002\u000C";
 	const LO = 0, HI = 1;
+	
 	const LEFT_MOST_32    = 0x80000000;
 	const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
 	const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
-	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);
-	const MAGIC_STRING_UINT64 = "\u0000\u0018\u0002\u000C";
-	const MAGIC_STRING_INT64 = "\u0000\u0018\u0002\u000C";
-	const SERIALIZE_MAP = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-//	const SERIALIZE_MAP = "lqNOoVX_vMhSQZzFkRP51n3x8m6HJd-T9Bg0EapysGY7twLruCf4cjieKbUWI2DA".split('');
+	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);	// 1000000000
+	const SERIALIZE_MAP   = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 	const SERIALIZE_MAP_R = {};
+	const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
+	const HEX_FORMAT	  = /^(0x)?[0-9A-F]+$/;
+	const BIN_FORMAT	  = /^0b[01]+$/;
 	for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 	// endregion
 	
@@ -1179,7 +1182,7 @@
 	 * @returns {Uint32Array}
 	 * @private
 	**/
-	function ___UNPACK(value) {
+	function ___UNPACK(value=0) {
 		if ( value instanceof UInt64 ) {
 			return value._ta;
 		}
@@ -1208,33 +1211,124 @@
 		}
 		
 		const type = typeof value;
-		const buff = new ArrayBuffer(8);
-		const u32  = new Uint32Array(buff);
+		const u32  = new Uint32Array(2);
 		switch( type ) {
 			case "number":
+				___PARSE_NUMBER(u32, value);
+				break;
+			
+			case "string":
 			{
-				let negate = value < 0;
-				if ( negate ) {
-					value = Math.abs(value);
+				value = value.trim();
+				
+				if ( INTEGER_FORMAT.test(value) ) {
+					___PARSE_INT_STRING(u32, value);
 				}
-				
-				value = Math.floor(value);
-				u32[LO] = value % OVERFLOW32_MAX;
-				value = Math.floor(value / OVERFLOW32_MAX);
-				u32[HI] = value % OVERFLOW32_MAX;
-				
-				if ( negate ) {
-					___TWO_S_COMPLIMENT(u32);
+				else
+				if ( HEX_FORMAT.test(value) ) {
+					___PARSE_HEX_STRING(u32, value);
+				}
+				else
+				if ( BIN_FORMAT.test(value) ) {
+					___PARSE_BIN_STRING(u32, value);
 				}
 				break;
 			}
 			
-			case "string":
 			default:
 				return null;
 		}
 		
 		return u32;
+	}
+	
+	/**
+	 * Parse js number and write the parsed result into buff
+	 * @param {Uint32Array} buff
+	 * @param {number} value
+	 * @private
+	**/
+	function ___PARSE_NUMBER(buff, value) {
+		let negate = value < 0;
+		if ( negate ) {
+			value = Math.abs(value);
+		}
+		
+		value = Math.floor(value);
+		buff[LO] = value % OVERFLOW32_MAX;
+		value = Math.floor(value / OVERFLOW32_MAX);
+		buff[HI] = value % OVERFLOW32_MAX;
+		
+		if ( negate ) {
+			___TWO_S_COMPLIMENT(buff);
+		}
+	}
+	
+	/**
+	 * Parse js number and write the parsed result into buff
+	 * @param {Uint32Array} buff
+	 * @param {number} value
+	 * @private
+	**/
+	function ___PARSE_NUMBER_UNSIGNED(buff, value) {
+		value = Math.floor(value);
+		buff[LO] = value % OVERFLOW32_MAX;
+		value = Math.floor(value / OVERFLOW32_MAX);
+		buff[HI] = value % OVERFLOW32_MAX;
+	}
+	
+	/**
+	 * Parse integer formatted string and write the parsed result into buff
+	 * @param {Uint32Array} buff
+	 * @param {string} value
+	 * @private
+	**/
+	function ___PARSE_INT_STRING(buff, value) {
+		let temp = new Uint32Array(2);
+		let negative;
+		if ( negative = ['-', '+'].indexOf(value[0]) ) {
+			value = value.substring(1);
+			negative = ( negative >= 0 ) ? 1-negative : 0;
+		}
+		
+		buff[HI] = buff[LO] = 0;
+		while( value.length > 0 ) {
+			let int = parseInt(value.substring(value.length - 9, value.length), 10);
+			
+			___PARSE_NUMBER_UNSIGNED(temp, int);
+			___MULTIPLY(buff, DECIMAL_STEPPER);
+			___ADD(buff, temp);
+			
+			value = value.substring(0, value.length - 9);
+		}
+		
+		if ( negative ) {
+			___TWO_S_COMPLIMENT(buff);
+		}
+	}
+	
+	/**
+	 * Parse hex formatted string and write the parsed result into buff
+	 * @param {Uint32Array} buff
+	 * @param {string} value
+	 * @private
+	**/
+	function ___PARSE_HEX_STRING(buff, value) {
+		buff[LO] = parseInt(value.substring(value.length - 8, value.length), 16);
+		value = value.substring(0, value.length - 8);
+		buff[HI] = ( value.length <= 0 ) ? 0 : parseInt(value.substring(value.length - 8, value.length), 16);
+	}
+	
+	/**
+	 * Parse binary formatted string and write the parsed result into buff
+	 * @param {Uint32Array} buff
+	 * @param {string} value
+	 * @private
+	**/
+	function ___PARSE_BIN_STRING(buff, value) {
+		buff[LO] = parseInt(value.substring(value.length - 32, value.length), 2);
+		value = value.substring(0, value.length - 32);
+		buff[HI] = ( value.length <= 0 ) ? 0 : parseInt(value.substring(value.length - 32, value.length), 2);
 	}
 	
 	/**
