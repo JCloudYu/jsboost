@@ -17,18 +17,21 @@
 	
 	// region [ Internal constants ]
 	const MAGIC_STRING_UINT64 = "\u0000\u0018\u0002\u000C";
-	const MAGIC_STRING_INT64  = "\u0000\u0018\u0002\u000C";
+	const MAGIC_STRING_INT64  = "\u0000\u0018\u0003\u000C";
+	const SERIALIZE_UINT64	  = 0;
+	const SERIALIZE_INT64	  = 1;
 	const LO = 0, HI = 1;
 	
 	const LEFT_MOST_32    = 0x80000000;
 	const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
 	const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
-	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);	// 1000000000
-	const SERIALIZE_MAP   = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-	const SERIALIZE_MAP_R = {};
 	const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
 	const HEX_FORMAT	  = /^(0x)?[0-9A-F]+$/;
 	const BIN_FORMAT	  = /^0b[01]+$/;
+	const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);	// 1000000000
+	
+	const SERIALIZE_MAP   = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+	const SERIALIZE_MAP_R = {};
 	for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 	// endregion
 	
@@ -258,34 +261,7 @@
 		 * @returns {string}
 		**/
 		serialize() {
-			const resultBuff = new Uint8Array(this._ta.buffer);
-			let tail = [0, 0, 0, 0], str = MAGIC_STRING_UINT64;
-			str += SERIALIZE_MAP[resultBuff[0] >>> 2];
-			tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[1] >>> 2];
-			tail[0] =  tail[0] | (resultBuff[1] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[2] >>> 2];
-			tail[1] = (tail[1] | (resultBuff[2] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[3] >>> 2];
-			tail[1] =  tail[1] | (resultBuff[3] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[4] >>> 2];
-			tail[2] = (tail[2] | (resultBuff[4] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[5] >>> 2];
-			tail[2] =  tail[2] | (resultBuff[5] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[6] >>> 2];
-			tail[3] = (tail[3] | (resultBuff[6] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[7] >>> 2];
-			tail[3] =  tail[3] | (resultBuff[7] & 0x03);
-			
-			str += SERIALIZE_MAP[tail[0]];
-			str += SERIALIZE_MAP[tail[1]];
-			str += SERIALIZE_MAP[tail[2]];
-			str += SERIALIZE_MAP[tail[3]];
-			
-			return str;
+			return ___SERIALIZE(this._ta, SERIALIZE_UINT64);
 		}
 		
 		/**
@@ -355,27 +331,8 @@
 			if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING_UINT64 ) {
 				throw new TypeError( "The input serialized string is invalid!" );
 			}
-			
-			const recovered = new Uint8Array(8);
-			const tail = [
-				SERIALIZE_MAP_R[serialized_str[12]],
-				SERIALIZE_MAP_R[serialized_str[13]],
-				SERIALIZE_MAP_R[serialized_str[14]],
-				SERIALIZE_MAP_R[serialized_str[15]]
-			];
-			
-			recovered[0] = (SERIALIZE_MAP_R[serialized_str[ 4]] << 2)|((tail[0]>>2) & 0x03);
-			recovered[1] = (SERIALIZE_MAP_R[serialized_str[ 5]] << 2)|( tail[0]     & 0x03);
-			
-			recovered[2] = (SERIALIZE_MAP_R[serialized_str[ 6]] << 2)|((tail[1]>>2) & 0x03);
-			recovered[3] = (SERIALIZE_MAP_R[serialized_str[ 7]] << 2)|( tail[1]     & 0x03);
 		
-			recovered[4] = (SERIALIZE_MAP_R[serialized_str[ 8]] << 2)|((tail[2]>>2) & 0x03);
-			recovered[5] = (SERIALIZE_MAP_R[serialized_str[ 9]] << 2)|( tail[2]     & 0x03);
-			
-			recovered[6] = (SERIALIZE_MAP_R[serialized_str[10]] << 2)|((tail[3]>>2) & 0x03);
-			recovered[7] = (SERIALIZE_MAP_R[serialized_str[11]] << 2)|( tail[3]     & 0x03);
-			
+			const recovered = ___DESERIALIZE(serialized_str);
 			return UInt64.from(recovered.buffer);
 		}
 		
@@ -687,34 +644,7 @@
 		 * @returns {string}
 		**/
 		serialize() {
-			const resultBuff = new Uint8Array(this._ta.buffer);
-			let tail = [0, 0, 0, 0], str = MAGIC_STRING_INT64;
-			str += SERIALIZE_MAP[resultBuff[0] >>> 2];
-			tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[1] >>> 2];
-			tail[0] =  tail[0] | (resultBuff[1] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[2] >>> 2];
-			tail[1] = (tail[1] | (resultBuff[2] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[3] >>> 2];
-			tail[1] =  tail[1] | (resultBuff[3] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[4] >>> 2];
-			tail[2] = (tail[2] | (resultBuff[4] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[5] >>> 2];
-			tail[2] =  tail[2] | (resultBuff[5] & 0x03);
-			
-			str += SERIALIZE_MAP[resultBuff[6] >>> 2];
-			tail[3] = (tail[3] | (resultBuff[6] & 0x03)) << 2;
-			str += SERIALIZE_MAP[resultBuff[7] >>> 2];
-			tail[3] =  tail[3] | (resultBuff[7] & 0x03);
-			
-			str += SERIALIZE_MAP[tail[0]];
-			str += SERIALIZE_MAP[tail[1]];
-			str += SERIALIZE_MAP[tail[2]];
-			str += SERIALIZE_MAP[tail[3]];
-			
-			return str;
+			return ___SERIALIZE(this._ta, SERIALIZE_INT64);
 		}
 		
 		/**
@@ -785,27 +715,8 @@
 				throw new TypeError( "The input serialized string is invalid!" );
 			}
 			
-			const recovered = new Uint8Array(8);
-			const tail = [
-				SERIALIZE_MAP_R[serialized_str[12]],
-				SERIALIZE_MAP_R[serialized_str[13]],
-				SERIALIZE_MAP_R[serialized_str[14]],
-				SERIALIZE_MAP_R[serialized_str[15]]
-			];
-			
-			recovered[0] = (SERIALIZE_MAP_R[serialized_str[ 4]] << 2)|((tail[0]>>2) & 0x03);
-			recovered[1] = (SERIALIZE_MAP_R[serialized_str[ 5]] << 2)|( tail[0]     & 0x03);
-			
-			recovered[2] = (SERIALIZE_MAP_R[serialized_str[ 6]] << 2)|((tail[1]>>2) & 0x03);
-			recovered[3] = (SERIALIZE_MAP_R[serialized_str[ 7]] << 2)|( tail[1]     & 0x03);
-		
-			recovered[4] = (SERIALIZE_MAP_R[serialized_str[ 8]] << 2)|((tail[2]>>2) & 0x03);
-			recovered[5] = (SERIALIZE_MAP_R[serialized_str[ 9]] << 2)|( tail[2]     & 0x03);
-			
-			recovered[6] = (SERIALIZE_MAP_R[serialized_str[10]] << 2)|((tail[3]>>2) & 0x03);
-			recovered[7] = (SERIALIZE_MAP_R[serialized_str[11]] << 2)|( tail[3]     & 0x03);
-			
-			return Int64.from(recovered.buffer);
+			const recovered = ___DESERIALIZE(serialized_str);
+			return Int64.from(recovered);
 		}
 		
 		/**
@@ -864,6 +775,75 @@
 	
 	
 	// region [ Helper functions for binary operations ]
+	/**
+	 * Generate serialized data from given data
+	 * @param {Uint32Array} data
+	 * @param {number} type
+	 * @returns {string}
+	 * @private
+	**/
+	function ___SERIALIZE(data, type = SERIALIZE_UINT64) {
+		const resultBuff = new Uint8Array(data.buffer);
+		let tail = [0, 0, 0, 0], str = (type === SERIALIZE_UINT64) ? MAGIC_STRING_UINT64 : MAGIC_STRING_INT64;
+		str += SERIALIZE_MAP[resultBuff[0] >>> 2];
+		tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
+		str += SERIALIZE_MAP[resultBuff[1] >>> 2];
+		tail[0] =  tail[0] | (resultBuff[1] & 0x03);
+		
+		str += SERIALIZE_MAP[resultBuff[2] >>> 2];
+		tail[1] = (tail[1] | (resultBuff[2] & 0x03)) << 2;
+		str += SERIALIZE_MAP[resultBuff[3] >>> 2];
+		tail[1] =  tail[1] | (resultBuff[3] & 0x03);
+		
+		str += SERIALIZE_MAP[resultBuff[4] >>> 2];
+		tail[2] = (tail[2] | (resultBuff[4] & 0x03)) << 2;
+		str += SERIALIZE_MAP[resultBuff[5] >>> 2];
+		tail[2] =  tail[2] | (resultBuff[5] & 0x03);
+		
+		str += SERIALIZE_MAP[resultBuff[6] >>> 2];
+		tail[3] = (tail[3] | (resultBuff[6] & 0x03)) << 2;
+		str += SERIALIZE_MAP[resultBuff[7] >>> 2];
+		tail[3] =  tail[3] | (resultBuff[7] & 0x03);
+		
+		str += SERIALIZE_MAP[tail[0]];
+		str += SERIALIZE_MAP[tail[1]];
+		str += SERIALIZE_MAP[tail[2]];
+		str += SERIALIZE_MAP[tail[3]];
+		
+		return str;
+	}
+	
+	/**
+	 * Deserialize given UInt64 / Int64 serialized data back into Uint32Array
+	 * @param {string} data
+	 * @returns {Uint32Array}
+	 * @private
+	**/
+	function ___DESERIALIZE(data) {
+		const recovered = new Uint8Array(8);
+		const tail = [
+			SERIALIZE_MAP_R[data[12]],
+			SERIALIZE_MAP_R[data[13]],
+			SERIALIZE_MAP_R[data[14]],
+			SERIALIZE_MAP_R[data[15]]
+		];
+		
+		recovered[0] = (SERIALIZE_MAP_R[data[ 4]] << 2)|((tail[0]>>2) & 0x03);
+		recovered[1] = (SERIALIZE_MAP_R[data[ 5]] << 2)|( tail[0]     & 0x03);
+		
+		recovered[2] = (SERIALIZE_MAP_R[data[ 6]] << 2)|((tail[1]>>2) & 0x03);
+		recovered[3] = (SERIALIZE_MAP_R[data[ 7]] << 2)|( tail[1]     & 0x03);
+		
+		
+		recovered[4] = (SERIALIZE_MAP_R[data[ 8]] << 2)|((tail[2]>>2) & 0x03);
+		recovered[5] = (SERIALIZE_MAP_R[data[ 9]] << 2)|( tail[2]     & 0x03);
+		
+		recovered[6] = (SERIALIZE_MAP_R[data[10]] << 2)|((tail[3]>>2) & 0x03);
+		recovered[7] = (SERIALIZE_MAP_R[data[11]] << 2)|( tail[3]     & 0x03);
+		
+		return new Uint32Array(recovered.buffer);
+	}
+
 	/**
 	 * A mutable operation that perform bitwise and between two UInt64 value
 	 * @param {Uint32Array} a
@@ -1185,7 +1165,6 @@
 		if ( (value instanceof Int64) || (value instanceof UInt64) ) {
             return value._ta;
         }
-        
 		if ( value instanceof Uint32Array ) {
 			const array = new Uint32Array(2);
 			array[LO] = value[LO] || 0;
