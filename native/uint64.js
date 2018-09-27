@@ -1262,21 +1262,32 @@
 	**/
 	function ___PARSE_INT_STRING(buff, value) {
 		let temp = new Uint32Array(2);
-		let negative;
-		if ( negative = ['-', '+'].indexOf(value[0]) ) {
+		let negative = ['-', '+'].indexOf(value[0]);
+		if ( negative >= 0 ) {
 			value = value.substring(1);
-			negative = ( negative >= 0 ) ? 1-negative : 0;
+			negative = 1-negative;
+		}
+		else {
+			negative = 0;
 		}
 		
+		console.log("");
+		console.log(value);
+		console.log("");
+		
 		buff[HI] = buff[LO] = 0;
+		let increase = 0;
 		while( value.length > 0 ) {
 			let int = parseInt(value.substring(value.length - 9, value.length), 10);
 			
 			___PARSE_NUMBER_UNSIGNED(temp, int);
-			___MULTIPLY(buff, DECIMAL_STEPPER);
+			for ( let i=0; i<increase; i++ ) {
+				___MULTIPLY(temp, DECIMAL_STEPPER);
+			}
 			___ADD(buff, temp);
 			
 			value = value.substring(0, value.length - 9);
+			increase++;
 		}
 		
 		if ( negative ) {
