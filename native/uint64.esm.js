@@ -26,7 +26,7 @@ const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);	// 1000000000
 const SERIALIZE_MAP   = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 const SERIALIZE_MAP_R = {};
 const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
-const HEX_FORMAT	  = /^(0x)?[0-9A-F]+$/;
+const HEX_FORMAT	  = /^(0x)?[0-9A-Fa-f]+$/;
 const BIN_FORMAT	  = /^0b[01]+$/;
 for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 // endregion
