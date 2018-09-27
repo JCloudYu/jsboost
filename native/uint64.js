@@ -1095,20 +1095,19 @@
 		// endregion
 		
 		// region [ Calc division ]
-		count = d_padding - r_padding;
+		count = d_padding - r_padding + 1;
 		while( count-- > 0 ) {
-			if ( ___COMPARE(a, b) < 0 ) {
-				___LEFT_SHIFT(quotient, 1);
-			}
-			else {
+			if ( ___COMPARE(remainder, b) >= 0 ) {
 				___SUB(remainder, b);
 				quotient[LO] = quotient[LO] | 0x01;
-				___LEFT_SHIFT(quotient, 1);
 			}
-			___RIGHT_SHIFT_UNSIGNED(b, 1);
+			
+			if ( count > 0 ) {
+				___LEFT_SHIFT(quotient, 1);
+				___RIGHT_SHIFT_UNSIGNED(b, 1);
+			}
 		}
 		// endregion
-		
 		return quotient;
 	}
 	
