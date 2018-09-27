@@ -2650,6 +2650,24 @@
 
             return str;
         };
+        
+        P.toUInt64 = function(){
+        	const content = new Uint32Array(2);
+			let val = this, divisor = 0xFFFFFFFF + 1;
+			if ( this.s < 0 ) {
+				val = new BigNumber(this);
+				val.s = 1;
+			}
+        	content[0] = val.mod(divisor).toNumber();
+        	val = val.idiv(divisor);
+        	content[1] = val.mod(divisor).toNumber();
+        	if ( this.s < 0 ) {
+        		let overflow = (~content[0] + 1);
+        		content[0] = overflow;
+        		content[1] = (~content[1] + ((overflow/0xFFFFFFFF)|0));
+        	}
+        	return new Uint8Array(content.buffer);
+        };
 
 
         /*
