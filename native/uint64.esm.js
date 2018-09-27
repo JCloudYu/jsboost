@@ -14,7 +14,7 @@ if ( typeof Buffer !== "undefined" ) {
 
 // region [ Internal constants ]
 const MAGIC_STRING_UINT64 = "\u0000\u0018\u0002\u000C";
-const MAGIC_STRING_INT64  = "\u0000\u0018\u0002\u000C";
+const MAGIC_STRING_INT64  = "\u0000\u0018\u0003\u000C";
 const SERIALIZE_UINT64	  = 0;
 const SERIALIZE_INT64	  = 1;
 const LO = 0, HI = 1;
@@ -22,12 +22,13 @@ const LO = 0, HI = 1;
 const LEFT_MOST_32    = 0x80000000;
 const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
 const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
+const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
+const HEX_FORMAT	  = /^0x[0-9A-Fa-f]+$/;
+const BIN_FORMAT	  = /^0b[01]+$/;
 const DECIMAL_STEPPER = new Uint32Array([0x3B9ACA00, 0x00000000]);	// 1000000000
+
 const SERIALIZE_MAP   = "0123456789abcdefghijklmnopqrstuvwxyz-_ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
 const SERIALIZE_MAP_R = {};
-const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
-const HEX_FORMAT	  = /^(0x)?[0-9A-Fa-f]+$/;
-const BIN_FORMAT	  = /^0b[01]+$/;
 for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] = i; }
 // endregion
 
@@ -36,7 +37,7 @@ for( let i=0; i<SERIALIZE_MAP.length; i++ ) { SERIALIZE_MAP_R[SERIALIZE_MAP[i]] 
 export class UInt64 {
 	/**
 	 * UInt64 Constructor
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	**/
 	constructor(value=0){
 		this.value  = value;
@@ -76,7 +77,7 @@ export class UInt64 {
 	
 	/**
 	 * Perform bit-wise or operation with the given value and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	or(value) {
@@ -93,7 +94,7 @@ export class UInt64 {
 	
 	/**
 	 * Perform bit-wise and operation with the given value and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	and(value) {
@@ -110,7 +111,7 @@ export class UInt64 {
 	
 	/**
 	 * Perform bit-wise xor operation with the given value and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	xor(value) {
@@ -127,7 +128,7 @@ export class UInt64 {
 	
 	/**
 	 * Add the instance with given value (UInt64 + value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	add(value) {
@@ -143,7 +144,7 @@ export class UInt64 {
 	
 	/**
 	 * Sub the instance with given value (UInt64 - value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	sub(value) {
@@ -159,7 +160,7 @@ export class UInt64 {
 	
 	/**
 	 * Multiply the instance with given value (UInt64 * value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	multiply(value) {
@@ -168,7 +169,7 @@ export class UInt64 {
 	
 	/**
 	 * Multiply the instance with given value (UInt64 * value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	mul(value) {
@@ -184,7 +185,7 @@ export class UInt64 {
 	
 	/**
 	 * Divide the instance with given value (UInt64 / value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	divide(value) {
@@ -193,7 +194,7 @@ export class UInt64 {
 	
 	/**
 	 * Divide the instance with given value (UInt64 / value) and return the result
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	div(value) {
@@ -207,7 +208,7 @@ export class UInt64 {
 	
 	/**
 	 * Divide the instance with given value (UInt64 / value) and return the modulo
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	modulo(value) {
@@ -216,7 +217,7 @@ export class UInt64 {
 	
 	/**
 	 * Divide the instance with given value (UInt64 / value) and return the modulo
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	mod(value) {
@@ -232,7 +233,7 @@ export class UInt64 {
 	
 	/**
 	 * Compare the instance with given value
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {number} returns 1 if UInt32 > value, -1 if UInt32 < value, 0 otherwise
 	**/
 	compare(value) {
@@ -327,14 +328,14 @@ export class UInt64 {
 		if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING_UINT64 ) {
 			throw new TypeError( "The input serialized string is invalid!" );
 		}
-		
+	
 		const recovered = ___DESERIALIZE(serialized_str);
-		return UInt64.from(recovered);
+		return UInt64.from(recovered.buffer);
 	}
 	
 	/**
 	 * Instantiate a UInt64 base on input value
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {UInt64}
 	**/
 	static from(value=0) {
@@ -364,7 +365,7 @@ export class UInt64 {
 export class Int64 {
 	/**
 	 * Int64 Constructor
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	**/
 	constructor(value=0){
 		this.value  = value;
@@ -404,7 +405,7 @@ export class Int64 {
 	
 	/**
 	 * Perform bit-wise or operation with the given value and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	or(value) {
@@ -421,7 +422,7 @@ export class Int64 {
 	
 	/**
 	 * Perform bit-wise and operation with the given value and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	and(value) {
@@ -438,7 +439,7 @@ export class Int64 {
 	
 	/**
 	 * Perform bit-wise xor operation with the given value and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	xor(value) {
@@ -452,7 +453,7 @@ export class Int64 {
 		___XOR(newVal._ta, val);
 		return newVal;
 	}
-		
+	
 	/**
 	 * Return the absolute value of the instance
 	 * @return {Int64}
@@ -468,7 +469,7 @@ export class Int64 {
 	
 	/**
 	 * Add the instance with given value (Int64 + value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	add(value) {
@@ -484,7 +485,7 @@ export class Int64 {
 	
 	/**
 	 * Sub the instance with given value (Int64 - value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	sub(value) {
@@ -500,7 +501,7 @@ export class Int64 {
 	
 	/**
 	 * Multiply the instance with given value (Int64 * value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	multiply(value) {
@@ -509,7 +510,7 @@ export class Int64 {
 	
 	/**
 	 * Multiply the instance with given value (Int64 * value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	mul(value) {
@@ -525,7 +526,7 @@ export class Int64 {
 	
 	/**
 	 * Divide the instance with given value (Int64 / value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	divide(value) {
@@ -534,7 +535,7 @@ export class Int64 {
 	
 	/**
 	 * Divide the instance with given value (Int64 / value) and return the result
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	div(value) {
@@ -565,7 +566,7 @@ export class Int64 {
 	
 	/**
 	 * Divide the instance with given value (Int64 / value) and return the modulo
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	modulo(value) {
@@ -574,7 +575,7 @@ export class Int64 {
 	
 	/**
 	 * Divide the instance with given value (Int64 / value) and return the modulo
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	mod(value) {
@@ -596,10 +597,8 @@ export class Int64 {
 		}
 		
 		___DIVIDE(self, input);
-		if ( neg_input ^ neg_self ) {
-			if ( neg_self ) {
-				___TWO_S_COMPLIMENT(self);
-			}
+		if ( neg_self ) {
+			___TWO_S_COMPLIMENT(self);
 		}
 		
 		return Int64.from(self);
@@ -607,7 +606,7 @@ export class Int64 {
 	
 	/**
 	 * Compare the instance with given value
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {number} returns 1 if UInt32 > value, -1 if UInt32 < value, 0 otherwise
 	**/
 	compare(value) {
@@ -717,7 +716,7 @@ export class Int64 {
 	
 	/**
 	 * Instantiate a Int64 base on input value
-	 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+	 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Int64}
 	**/
 	static from(value=0) {
@@ -768,7 +767,7 @@ export class Int64 {
 **/
 function ___SERIALIZE(data, type = SERIALIZE_UINT64) {
 	const resultBuff = new Uint8Array(data.buffer);
-	let tail = [0, 0, 0, 0], str = type ? MAGIC_STRING_UINT64 : MAGIC_STRING_INT64;
+	let tail = [0, 0, 0, 0], str = (type === SERIALIZE_UINT64) ? MAGIC_STRING_UINT64 : MAGIC_STRING_INT64;
 	str += SERIALIZE_MAP[resultBuff[0] >>> 2];
 	tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
 	str += SERIALIZE_MAP[resultBuff[1] >>> 2];
@@ -817,7 +816,8 @@ function ___DESERIALIZE(data) {
 	
 	recovered[2] = (SERIALIZE_MAP_R[data[ 6]] << 2)|((tail[1]>>2) & 0x03);
 	recovered[3] = (SERIALIZE_MAP_R[data[ 7]] << 2)|( tail[1]     & 0x03);
-
+	
+	
 	recovered[4] = (SERIALIZE_MAP_R[data[ 8]] << 2)|((tail[2]>>2) & 0x03);
 	recovered[5] = (SERIALIZE_MAP_R[data[ 9]] << 2)|( tail[2]     & 0x03);
 	
@@ -1023,6 +1023,10 @@ function ___MULTIPLY(a, b) {
  * @private
 **/
 function ___DIVIDE(a, b) {
+	if ( ___IS_ZERO(b) ) {
+		throw new TypeError( "Dividing zero prohibited!" );
+	}
+
 	const quotient	= new Uint32Array(2);
 	if ( ___COMPARE(a, b) < 0 ) {
 		return quotient;
@@ -1140,7 +1144,7 @@ function ___COMPARE(a, b) {
 // region [ Miscellaneous helper functions ]
 /**
  * Get raw Uint32Array values converted from source value
- * @param {String|Number|UInt64|Uint32Array|ArrayBuffer} value
+ * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
  * @returns {Uint32Array}
  * @private
 **/
@@ -1148,11 +1152,24 @@ function ___UNPACK(value=0) {
 	if ( (value instanceof Int64) || (value instanceof UInt64) ) {
 		return value._ta;
 	}
-	
 	if ( value instanceof Uint32Array ) {
 		const array = new Uint32Array(2);
 		array[LO] = value[LO] || 0;
 		array[HI] = value[HI] || 0;
+		return array;
+	}
+	if ( value instanceof Uint16Array ) {
+		const array = new Uint32Array(2);
+		const val = new Uint32Array(value.buffer);
+		array[LO] = val[LO] || 0;
+		array[HI] = val[HI] || 0;
+		return array;
+	}
+	if ( value instanceof Uint8Array ) {
+		const array = new Uint32Array(2);
+		const val = new Uint32Array(value.buffer);
+		array[LO] = val[LO] || 0;
+		array[HI] = val[HI] || 0;
 		return array;
 	}
 	if ( value instanceof ArrayBuffer ) {
@@ -1194,6 +1211,9 @@ function ___UNPACK(value=0) {
 			else
 			if ( BIN_FORMAT.test(value) ) {
 				___PARSE_BIN_STRING(u32, value);
+			}
+			else {
+				return null;
 			}
 			break;
 		}

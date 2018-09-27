@@ -40,7 +40,7 @@
 	class UInt64 {
 		/**
 		 * UInt64 Constructor
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		**/
 		constructor(value=0){
 			this.value  = value;
@@ -80,7 +80,7 @@
 		
 		/**
 		 * Perform bit-wise or operation with the given value and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		or(value) {
@@ -97,7 +97,7 @@
 		
 		/**
 		 * Perform bit-wise and operation with the given value and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		and(value) {
@@ -114,7 +114,7 @@
 		
 		/**
 		 * Perform bit-wise xor operation with the given value and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		xor(value) {
@@ -131,7 +131,7 @@
 		
 		/**
 		 * Add the instance with given value (UInt64 + value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		add(value) {
@@ -147,7 +147,7 @@
 		
 		/**
 		 * Sub the instance with given value (UInt64 - value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		sub(value) {
@@ -163,7 +163,7 @@
 		
 		/**
 		 * Multiply the instance with given value (UInt64 * value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		multiply(value) {
@@ -172,7 +172,7 @@
 		
 		/**
 		 * Multiply the instance with given value (UInt64 * value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		mul(value) {
@@ -188,7 +188,7 @@
 		
 		/**
 		 * Divide the instance with given value (UInt64 / value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		divide(value) {
@@ -197,7 +197,7 @@
 		
 		/**
 		 * Divide the instance with given value (UInt64 / value) and return the result
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		div(value) {
@@ -211,7 +211,7 @@
 		
 		/**
 		 * Divide the instance with given value (UInt64 / value) and return the modulo
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		modulo(value) {
@@ -220,7 +220,7 @@
 		
 		/**
 		 * Divide the instance with given value (UInt64 / value) and return the modulo
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		mod(value) {
@@ -236,7 +236,7 @@
 		
 		/**
 		 * Compare the instance with given value
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {number} returns 1 if UInt32 > value, -1 if UInt32 < value, 0 otherwise
 		**/
 		compare(value) {
@@ -338,7 +338,7 @@
 		
 		/**
 		 * Instantiate a UInt64 base on input value
-		 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {UInt64}
 		**/
 		static from(value=0) {
@@ -381,7 +381,7 @@
 	class Int64 {
 		/**
 		 * Int64 Constructor
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		**/
 		constructor(value=0){
 			this.value  = value;
@@ -421,7 +421,7 @@
 		
 		/**
 		 * Perform bit-wise or operation with the given value and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		or(value) {
@@ -438,7 +438,7 @@
 		
 		/**
 		 * Perform bit-wise and operation with the given value and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		and(value) {
@@ -455,7 +455,7 @@
 		
 		/**
 		 * Perform bit-wise xor operation with the given value and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		xor(value) {
@@ -485,7 +485,7 @@
 		
 		/**
 		 * Add the instance with given value (Int64 + value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		add(value) {
@@ -501,7 +501,7 @@
 		
 		/**
 		 * Sub the instance with given value (Int64 - value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		sub(value) {
@@ -517,7 +517,7 @@
 		
 		/**
 		 * Multiply the instance with given value (Int64 * value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		multiply(value) {
@@ -526,7 +526,7 @@
 		
 		/**
 		 * Multiply the instance with given value (Int64 * value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		mul(value) {
@@ -542,7 +542,7 @@
 		
 		/**
 		 * Divide the instance with given value (Int64 / value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		divide(value) {
@@ -551,7 +551,7 @@
 		
 		/**
 		 * Divide the instance with given value (Int64 / value) and return the result
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		div(value) {
@@ -582,7 +582,7 @@
 		
 		/**
 		 * Divide the instance with given value (Int64 / value) and return the modulo
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		modulo(value) {
@@ -591,7 +591,7 @@
 		
 		/**
 		 * Divide the instance with given value (Int64 / value) and return the modulo
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		mod(value) {
@@ -622,7 +622,7 @@
 		
 		/**
 		 * Compare the instance with given value
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {number} returns 1 if UInt32 > value, -1 if UInt32 < value, 0 otherwise
 		**/
 		compare(value) {
@@ -732,7 +732,7 @@
 		
 		/**
 		 * Instantiate a Int64 base on input value
-		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
+		 * @param {String|Number|Int64|Uint8Array|Uint16Array|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}
 		**/
 		static from(value=0) {
@@ -1051,6 +1051,10 @@
 	 * @private
 	**/
 	function ___DIVIDE(a, b) {
+		if ( ___IS_ZERO(b) ) {
+			throw new TypeError( "Dividing zero prohibited!" );
+		}
+	
 		const quotient	= new Uint32Array(2);
 		if ( ___COMPARE(a, b) < 0 ) {
 			return quotient;
@@ -1168,7 +1172,7 @@
 	// region [ Miscellaneous helper functions ]
 	/**
 	 * Get raw Uint32Array values converted from source value
-	 * @param {String|Number|UInt64|Uint32Array|ArrayBuffer} value
+	 * @param {String|Number|UInt64|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|Number[]} value
 	 * @returns {Uint32Array}
 	 * @private
 	**/
@@ -1180,6 +1184,20 @@
 			const array = new Uint32Array(2);
 			array[LO] = value[LO] || 0;
 			array[HI] = value[HI] || 0;
+			return array;
+		}
+		if ( value instanceof Uint16Array ) {
+			const array = new Uint32Array(2);
+			const val = new Uint32Array(value.buffer);
+			array[LO] = val[LO] || 0;
+			array[HI] = val[HI] || 0;
+			return array;
+		}
+		if ( value instanceof Uint8Array ) {
+			const array = new Uint32Array(2);
+			const val = new Uint32Array(value.buffer);
+			array[LO] = val[LO] || 0;
+			array[HI] = val[HI] || 0;
 			return array;
 		}
 		if ( value instanceof ArrayBuffer ) {
