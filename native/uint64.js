@@ -203,7 +203,7 @@
 				throw new TypeError( "Given value is not a valid UInt64 format!" );
 			}
 			
-			return new UInt64(___DIVIDE(this._ta.slice(0), val.slice(0)));
+			return new UInt64(___DIVIDE(this._ta.slice(0), val));
 		}
 		
 		/**
@@ -227,7 +227,7 @@
 			}
 			
 			const newVal = UInt64.from(this);
-			___DIVIDE(newVal._ta, val.slice(0));
+			___DIVIDE(newVal._ta, val);
 			return newVal;
 		}
 		
@@ -1068,6 +1068,7 @@
 		
 		
 		let remainder = a.slice(0);
+		let divider	  = b.slice(0);
 		
 		// region [ Align divider and remainder ]
 		let d_padding = 0, r_padding = 0, count = 64;
@@ -1083,27 +1084,27 @@
 		
 		count = 64;
 		while( count-- > 0 ) {
-			if ( (b[HI] & LEFT_MOST_32) !== 0 ) {
+			if ( (divider[HI] & LEFT_MOST_32) !== 0 ) {
 				break;
 			}
 			
-			___LEFT_SHIFT(b, 1);
+			___LEFT_SHIFT(divider, 1);
 			d_padding++;
 		}
-		___RIGHT_SHIFT_UNSIGNED(b, r_padding);
+		___RIGHT_SHIFT_UNSIGNED(divider, r_padding);
 		// endregion
 		
 		// region [ Calc division ]
 		count = d_padding - r_padding + 1;
 		while( count-- > 0 ) {
-			if ( ___COMPARE(remainder, b) >= 0 ) {
-				___SUB(remainder, b);
+			if ( ___COMPARE(remainder, divider) >= 0 ) {
+				___SUB(remainder, divider);
 				quotient[LO] = quotient[LO] | 0x01;
 			}
 			
 			if ( count > 0 ) {
 				___LEFT_SHIFT(quotient, 1);
-				___RIGHT_SHIFT_UNSIGNED(b, 1);
+				___RIGHT_SHIFT_UNSIGNED(divider, 1);
 			}
 		}
 		// endregion
@@ -1181,12 +1182,10 @@
 	 * @private
 	**/
 	function ___UNPACK(value=0) {
-		if ( value instanceof Int64 ) {
+		if ( (value instanceof Int64) || (value instanceof UInt64) ) {
             return value._ta;
         }
-		if ( value instanceof UInt64 ) {
-			return value._ta;
-		}
+        
 		if ( value instanceof Uint32Array ) {
 			const array = new Uint32Array(2);
 			array[LO] = value[LO] || 0;
