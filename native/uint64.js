@@ -600,10 +600,8 @@
 			}
 			
 			___DIVIDE(self, input);
-			if ( neg_input ^ neg_self ) {
-				if ( neg_self ) {
-					___TWO_S_COMPLIMENT(self);
-				}
+			if ( neg_self ) {
+				___TWO_S_COMPLIMENT(self);
 			}
 			
 			return Int64.from(self);
