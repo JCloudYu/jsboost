@@ -471,6 +471,19 @@
 		}
 		
 		/**
+		 * Return the absolute value of the instance
+		 * @return {Int64}
+		**/
+		abs() {
+			const newVal = new Int64(this);
+			if ( ___IS_NEGATIVE(newVal._ta) ) {
+				___TWO_S_COMPLIMENT(newVal._ta);
+			}
+			
+			return newVal;
+		}
+		
+		/**
 		 * Add the instance with given value (Int64 + value) and return the result
 		 * @param {String|Number|Int64|Uint32Array|ArrayBuffer|Number[]} value
 		 * @returns {Int64}

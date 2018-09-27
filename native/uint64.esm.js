@@ -452,6 +452,19 @@ export class Int64 {
 		___XOR(newVal._ta, val);
 		return newVal;
 	}
+		
+	/**
+	 * Return the absolute value of the instance
+	 * @return {Int64}
+	**/
+	abs() {
+		const newVal = new Int64(this);
+		if ( ___IS_NEGATIVE(newVal._ta) ) {
+			___TWO_S_COMPLIMENT(newVal._ta);
+		}
+		
+		return newVal;
+	}
 	
 	/**
 	 * Add the instance with given value (Int64 + value) and return the result
