@@ -1218,6 +1218,11 @@
 			return new Uint32Array(value);
 		}
 		
+		// TODO: We can establish a type conversion protocol in the future
+		if ( Object(value) === value && value.toUInt64 ) {
+			return new Uint32Array(value.toUInt64());
+		}
+		
 		const type = typeof value;
 		const u32  = new Uint32Array(2);
 		switch( type ) {
