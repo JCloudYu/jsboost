@@ -1209,6 +1209,9 @@
 				if ( BIN_FORMAT.test(value) ) {
 					___PARSE_BIN_STRING(u32, value);
 				}
+				else {
+					return null;
+				}
 				break;
 			}
 			
