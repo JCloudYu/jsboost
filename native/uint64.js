@@ -1271,10 +1271,6 @@
 			negative = 0;
 		}
 		
-		console.log("");
-		console.log(value);
-		console.log("");
-		
 		buff[HI] = buff[LO] = 0;
 		let increase = 0;
 		while( value.length > 0 ) {
