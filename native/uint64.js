@@ -938,7 +938,7 @@
 			return;
 		}
 		
-		if ( BITS <= 32 ) {
+		if ( BITS < 32 ) {
 			const MASK = ___GEN_MASK(BITS);
 			let shifted = (value[HI] & MASK) >>> 0;
 			value[HI] = value[HI] >>> BITS;
@@ -964,15 +964,14 @@
 			throw new TypeError( "Shift bits number must be a number" );
 		}
 		
-		const negative = ___IS_NEGATIVE(value);
-		
 		if ( BITS >= 64 ) {
+			const negative = ___IS_NEGATIVE(value);
 			value[HI] = negative ? 0xFFFFFFFF : 0;
 			value[LO] = negative ? 0xFFFFFFFF : 0;
 			return;
 		}
 		
-		if ( BITS <= 32 ) {
+		if ( BITS < 32 ) {
 			const MASK = ___GEN_MASK(BITS);
 			let shifted = (value[HI] & MASK) >>> 0;
 			value[HI] = value[HI] >> BITS;
@@ -983,7 +982,7 @@
 		
 		BITS = BITS - 32;
 		value[LO] = (value[HI] >> BITS);
-		value[HI] = 0xFFFFFFFF;
+		value[HI] = (value[HI] >> 16 >> 16);
 	}
 	
 	/**
@@ -1182,6 +1181,9 @@
 	 * @private
 	**/
 	function ___UNPACK(value=0) {
+		if ( value instanceof Int64 ) {
+            return value._ta;
+        }
 		if ( value instanceof UInt64 ) {
 			return value._ta;
 		}
