@@ -1003,7 +1003,7 @@
 			return;
 		}
 		
-		if ( BITS <= 32 ) {
+		if ( BITS < 32 ) {
 			const MASK = (~___GEN_MASK(32-BITS)) >>> 0;
 			let shifted = (value[LO] & MASK) >>> (32-BITS);
 			value[LO] = (value[LO] << BITS) >>> 0;
