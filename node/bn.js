@@ -223,9 +223,9 @@
                 return new BigNumber(n, b);
             }
 
-            if (b == null) {
-                n = ___UNPACK(n);
+            n = ___UNPACK(n);
 
+            if (b == null) {
                 // Duplicate.
                 if (n instanceof BigNumber) {
                     x.s = n.s;
