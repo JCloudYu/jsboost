@@ -290,6 +290,7 @@
 		}
 		
 		/**
+		 * (Binarization Protocol)
 		 * Return binary representation of this instance
 		 * @return {ArrayBuffer}
 		**/
@@ -297,6 +298,13 @@
 			const buff = this._ta.buffer;
 			return buff.slice(0, len === null ? buff.byteLength : len);
 		}
+		
+		/**
+		 * (NumberBinarization Protocol)
+		 * Return whether the given instance is signed or unsigned
+		 * @returns {boolean}
+		**/
+		isSigned() { return false; }
 		
 		set value(val) {
 			const _val = ___UNPACK(val);
@@ -692,6 +700,7 @@
 		}
 		
 		/**
+		 * (Binarization Protocol)
 		 * Return binary representation of this instance
 		 * @return {ArrayBuffer}
 		**/
@@ -699,6 +708,13 @@
 			const buff = this._ta.buffer;
 			return buff.slice(0, len === null ? buff.byteLength : len);
 		}
+		
+		/**
+		 * (NumberBinarization Protocol)
+		 * Return whether the given instance is signed or unsigned
+		 * @returns {boolean}
+		**/
+		isSigned() { return true; }
 		
 		
 		set value(val) {

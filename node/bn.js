@@ -742,14 +742,15 @@
          * @return {BigNumber}
          */
         BigNumber.deserialize = function (string) {
-        	if (string.slice(0, 3) !== MAGIC_STRING) {
+        	if ( string.slice(0, 3) !== MAGIC_STRING ) {
         		throw new TypeError( "Cannot parse the given serialized input!" );
         	}
-
+        
+        	
         	let obj = JSON.parse(base64urlDecode(string.slice(3)));
             let bn = new BigNumber();
 
-            if ((obj !== null) && (typeof obj === 'object')) {
+            if (obj !== null && (typeof obj === 'object')) {
                 bn.c = obj.c;
                 bn.e = obj.e;
                 bn.s = obj.s;
@@ -2650,6 +2651,8 @@
             return str;
         };
         
+        P.isSigned = function(){ return true; };
+        
         /**
 		 * Returns the instance's binary representation that is truncated to 64bits
 		 * @returns {ArrayBuffer}
@@ -2858,17 +2861,29 @@
 	 * @private
 	 */
 	function ___UNPACK(value) {
-		if ( Object(value) === value && !(value instanceof BigNumber)  && value.toBytes ) {
+		if ( Object(value) === value && !(value instanceof BigNumber) && value.toBytes ) {
 			const bytes		= new Uint8Array(value.toBytes());
+			const signed	= value.isSigned ? value.isSigned() : false;
+			const negative	= ((bytes[bytes.length-1] & 0x80) !== 0) && signed;
 			
 			let number = new BigNumber(0);
+			if ( negative ) {
+				let overflow = 1;
+				for ( let i=0; i<bytes.length; i++ ) {
+					overflow = (((~bytes[i]) & 0xFF)>>>0) + overflow;
+					bytes[i] = overflow;
+					overflow = (overflow/0x0100)|0;
+				}
+			}
+			
+			
 			let stepping = new BigNumber(1);
 			for ( let byte of bytes ) {
 				number = (new BigNumber(byte)).mul(stepping).add(number);
 				stepping = stepping.mul(0x0100);
 			}
 			
-			return number;
+			return negative ? number.mul(-1) : number;
 		}
 		
 		return value;
