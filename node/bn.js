@@ -2676,11 +2676,11 @@
 			
 			let size = Math.max(0, cache.length, (len === null) ? 0 : Math.ceil(len/4));
 			let content = new Uint32Array(size);
-			for( let i=0; i<content.length; i++ ) content[i] = cache[i] || 0;
+			for( let i=0; i<content.length; i++ ) content[i] = ((cache[i] || 0) & 0xFFFFFFFF)>>>0;
         	if ( this.s < 0 ) {
-        		let overflow = 0;
+        		let overflow = 1;
         		for( let i=0; i<content.length; i++ ) {
-        			overflow = (~content[i] + 1);
+        			overflow = ((~content[i] & 0xFFFFFFFF)>>>0) + overflow;
         			content[i] = overflow;
         			overflow = (overflow/divisor)|0;
         		}
