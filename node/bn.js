@@ -2650,28 +2650,43 @@
 
             return str;
         };
-	
-		/**
+        
+        /**
 		 * Returns the instance's binary representation that is truncated to 64bits
 		 * @returns {ArrayBuffer}
 		**/
-		P.toUInt64 = function(){
-        	const content = new Uint32Array(2);
-			let val = this, divisor = 0xFFFFFFFF + 1;
+		P.toBytes = function(len=null) {
+			let cache = [];
+			const divisor = 0xFFFFFFFF + 1;
+			let val = this;
 			if ( this.s < 0 ) {
 				val = new BigNumber(this);
 				val.s = 1;
 			}
-        	content[0] = val.mod(divisor).toNumber();
-        	val = val.idiv(divisor);
-        	content[1] = val.mod(divisor).toNumber();
+			
+			let num = 0;
+			while( !val.isEqualTo(0) ) {
+				num+=4;
+				if ( len !== null && num > len ) { break; }
+				cache.push(val.mod(divisor).toNumber());
+        		val = val.idiv(divisor);
+			}
+			
+			let size = Math.max(0, cache.length, (len === null) ? 0 : Math.ceil(len/4));
+			let content = new Uint32Array(size);
+			for( let i=0; i<content.length; i++ ) content[i] = cache[i] || 0;
         	if ( this.s < 0 ) {
-        		let overflow = (~content[0] + 1);
-        		content[0] = overflow;
-        		content[1] = (~content[1] + ((overflow/0xFFFFFFFF)|0));
+        		let overflow = 0;
+        		for( let i=0; i<content.length; i++ ) {
+        			overflow = (~content[i] + 1);
+        			content[i] = overflow;
+        			overflow = (overflow/divisor)|0;
+        		}
         	}
-        	return content.buffer;
+        	
+        	return (len === null) ? content.buffer : content.buffer.slice(0, len);
         };
+
 
 
         /*
@@ -2839,24 +2854,22 @@
 
     /**
 	 * Get BigNumber value converted from source value
-	 * @param {Uint64|Int64} value
+	 * @param {UInt64|Int64} value
 	 * @returns {BigNumber}
 	 * @private
 	 */
 	function ___UNPACK(value) {
-
-        if (value instanceof Int64) {
-            let sign = value.isNegative() ? -1 : 1;
-            value = value.abs();
-            // ((hi * 2^32) + lo) * sign
-            let base = new BigNumber(2).pow(32);
-			return new BigNumber(value.hi).mul(base).add(value.lo).mul(sign);
-		}
-
-		if (value instanceof UInt64) {
-            // (hi * 2^32) + lo
-            let base = new BigNumber(2).pow(32);
-			return new BigNumber(value.hi).mul(base).add(value.lo);
+		if ( Object(value) === value && !(value instanceof BigNumber)  && value.toBytes ) {
+			const bytes		= new Uint8Array(value.toBytes());
+			
+			let number = new BigNumber(0);
+			let stepping = new BigNumber(1);
+			for ( let byte of bytes ) {
+				number = (new BigNumber(byte)).mul(stepping).add(number);
+				stepping = stepping.mul(0x0100);
+			}
+			
+			return number;
 		}
 		
 		return value;
