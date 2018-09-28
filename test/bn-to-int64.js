@@ -2,8 +2,10 @@
 
     const { Int64, BigNumber } = require('../jsboost');
 
-    // 2097151 * (2^32) + 4294967295 = 9007199254740991
+    // 9007199254740991
 	const MAX = new BigNumber(Number.MAX_SAFE_INTEGER);
+
+	// −9007199254740991
 	const MIN = new BigNumber(Number.MIN_SAFE_INTEGER);
 
 	process.stdout.write('Testing Int64 positive number...\n');
