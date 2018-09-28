@@ -742,15 +742,14 @@
          * @return {BigNumber}
          */
         BigNumber.deserialize = function (string) {
-        	if ( string.slice(0, 3) !== MAGIC_STRING ) {
+        	if (string.slice(0, 3) !== MAGIC_STRING) {
         		throw new TypeError( "Cannot parse the given serialized input!" );
         	}
-        
-        	
+
         	let obj = JSON.parse(base64urlDecode(string.slice(3)));
             let bn = new BigNumber();
 
-            if (obj !== null && (typeof obj === 'object')) {
+            if ((obj !== null) && (typeof obj === 'object')) {
                 bn.c = obj.c;
                 bn.e = obj.e;
                 bn.s = obj.s;
