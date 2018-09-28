@@ -102,7 +102,7 @@
         crypto = null;                               // crypto module
 
     const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url'),    // base64url module
-          { UInt64 } = require('../native/uint64');                                         // jsboost module
+          { Int64, UInt64 } = require('../native/uint64');                                  // jsboost module
 
     /*
      * Create and return a BigNumber constructor.
@@ -2844,6 +2844,14 @@
 	 * @private
 	 */
 	function ___UNPACK(value) {
+
+        if (value instanceof Int64) {
+            let sign = value.isNegative() ? -1 : 1;
+            value = value.abs();
+            // ((hi * 2^32) + lo) * sign
+            let base = new BigNumber(2).pow(32);
+			return new BigNumber(value.hi).mul(base).add(value.lo).mul(sign);
+		}
 
 		if (value instanceof UInt64) {
             // (hi * 2^32) + lo

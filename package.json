@@ -8,6 +8,7 @@
 		"test-bn": "node ./test/bn.js",
 		"test-int64": "node ./test/int64.js",
 		"test-uint64": "node ./test/uint64.js",
+		"test-int64-to-bn": "node ./test/int64-to-bn",
 		"test-uint64-to-bn": "node ./test/uint64-to-bn",
 		"test-base64url": "node ./test/base64url.js",
 		"test-serialization": "node ./test/serialization.js",
