@@ -285,6 +285,15 @@ export class UInt64 {
 	toJSON() {
 		return this.serialize();
 	}
+		
+	/**
+	 * Return binary representation of this instance
+	 * @return {ArrayBuffer}
+	**/
+	toBytes(len=null) {
+		const buff = this._ta.buffer;
+		return buff.slice(0, len === null ? buff.byteLength : len);
+	}
 	
 	
 	set value(val) {
@@ -666,6 +675,15 @@ export class Int64 {
 	toJSON() {
 		return this.serialize();
 	}
+		
+	/**
+	 * Return binary representation of this instance
+	 * @return {ArrayBuffer}
+	**/
+	toBytes(len=null) {
+		const buff = this._ta.buffer;
+		return buff.slice(0, len === null ? buff.byteLength : len);
+	}
 	
 	
 	set value(val) {
@@ -722,7 +740,6 @@ export class Int64 {
 	static from(value=0) {
 		return new Int64(value);
 	}
-	
 	
 	/**
 	 * Return an Int64 instance with value 0
@@ -1188,6 +1205,11 @@ function ___UNPACK(value=0) {
 	// UInt64 represented with UInt32 values, little-endian
 	if ( Array.isArray(value) ) {
 		return new Uint32Array(value);
+	}
+	
+	// TODO: We can establish a type conversion protocol in the future
+	if ( Object(value) === value && value.toBytes ) {
+		return new Uint32Array(value.toBytes(8));
 	}
 	
 	const type = typeof value;

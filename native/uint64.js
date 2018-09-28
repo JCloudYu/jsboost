@@ -289,6 +289,14 @@
 			return this.serialize();
 		}
 		
+		/**
+		 * Return binary representation of this instance
+		 * @return {ArrayBuffer}
+		**/
+		toBytes(len=null) {
+			const buff = this._ta.buffer;
+			return buff.slice(0, len === null ? buff.byteLength : len);
+		}
 		
 		set value(val) {
 			const _val = ___UNPACK(val);
@@ -681,6 +689,15 @@
 		**/
 		toJSON() {
 			return this.serialize();
+		}
+		
+		/**
+		 * Return binary representation of this instance
+		 * @return {ArrayBuffer}
+		**/
+		toBytes(len=null) {
+			const buff = this._ta.buffer;
+			return buff.slice(0, len === null ? buff.byteLength : len);
 		}
 		
 		
@@ -1219,8 +1236,8 @@
 		}
 		
 		// TODO: We can establish a type conversion protocol in the future
-		if ( Object(value) === value && value.toUInt64 ) {
-			return new Uint32Array(value.toUInt64());
+		if ( Object(value) === value && value.toBytes ) {
+			return new Uint32Array(value.toBytes(8));
 		}
 		
 		const type = typeof value;
