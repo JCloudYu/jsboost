@@ -1397,12 +1397,26 @@
 	**/
 	function ___TO_HEX_STRING(val) {
 		const BOUNDARY = val.length-1;
-		let str = '';
-		for ( let i=0; i<BOUNDARY; i++ ) {
-			str = ___PADDING_ZERO(val[i].toString(16), 8) + str;
+		let str = '', padding_flag = false;
+		for ( let i=BOUNDARY; i>=0; i-- ) {
+			if ( val[i] !== 0 ) {
+				if ( !padding_flag ) {
+					str += val[i].toString(16);
+				}
+				else {
+					str += ___PADDING_ZERO(val[i].toString(16), 8);
+				}
+				
+				padding_flag = padding_flag || true;
+			}
+			else {
+				if ( padding_flag ) {
+					str += ___PADDING_ZERO(val[i].toString(16), 8);
+				}
+			}
 		}
 		
-		return val[BOUNDARY].toString(16) + str;
+		return str;
 	}
 	
 	/**
