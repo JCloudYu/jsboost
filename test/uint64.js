@@ -7,7 +7,7 @@
 	
 	const {UInt64} = require( '../jsboost' );
 	const MAX = UInt64.from(Number.MAX_SAFE_INTEGER);
-	const MAX_UINT64 = UInt64.MAX_UINT64;
+	const MAX_UINT64 = UInt64.MAX;
 	
 	
 	process.stdout.write( "Testing arithmetic operations...\n" );

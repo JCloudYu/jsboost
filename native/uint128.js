@@ -374,7 +374,7 @@
 		 * Return an UInt128 instance with value 0xFFFFFFFFFFFFFFFF
 		 * @returns {UInt128}
 		**/
-		static get MAX_UINT64() {
+		static get MAX() {
 			return new UInt128([0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]);
 		}
 		
@@ -782,16 +782,16 @@
 		 * Return an Int128 instance with value 0xFFFFFFFFFFFFFFFF
 		 * @returns {Int128}
 		**/
-		static get MAX_INT64() {
-			return new Int128([0x7FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]);
+		static get MAX() {
+			return new Int128([0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x7FFFFFFF]);
 		}
 		
 		/**
 		 * Return an Int128 instance with value 0xFFFFFFFFFFFFFFFF
 		 * @returns {Int128}
 		**/
-		static get MIN_INT64() {
-			return new Int128([0x80000000, 0x00000000, 0x00000000, 0x00000000]);
+		static get MIN() {
+			return new Int128([0x00000000, 0x00000000, 0x00000000, 0x80000000]);
 		}
 		
 		/**
@@ -965,13 +965,12 @@
 		const REAL_SHIFT_BITS = BITS % 32;
 		const LEFT_OVER_BITS  = 32 - REAL_SHIFT_BITS;
 		const LOWER_MASK	  = (0xFFFFFFFF >>> LEFT_OVER_BITS);
-		
 		const ENDPOINT = value.length - SKIPPED_QWORDS;
 		for( let i=0; i<ENDPOINT; i++) {
 			const SRC_IDX = i + SKIPPED_QWORDS;
 			value[i] = value[SRC_IDX] >>>  REAL_SHIFT_BITS;
 			
-			if ( SRC_IDX + 1 < value.length ) {
+			if ( LEFT_OVER_BITS < 32 && SRC_IDX + 1 < value.length ) {
 				value[i] =  value[i] | ((value[SRC_IDX+1] & LOWER_MASK) << LEFT_OVER_BITS);
 			}
 		}
@@ -997,7 +996,7 @@
 	
 		const MAX_BITS	= value.byteLength * 8;
 		if ( BITS >= MAX_BITS ) {
-			value.fill(negative ? 0 : 0xFFFFFFFF);
+			value.fill(negative ? 0xFFFFFFFF : 0);
 			return;
 		}
 		
@@ -1013,17 +1012,19 @@
 			const SRC_IDX = i + SKIPPED_QWORDS;
 			value[i] = value[SRC_IDX] >>>  REAL_SHIFT_BITS;
 			
-			if ( SRC_IDX + 1 < value.length ) {
-				value[i] =  value[i] | ((value[SRC_IDX+1] & LOWER_MASK) << LEFT_OVER_BITS);
-			}
-			else
-			if ( negative ) {
-				value[i] =  value[i] | (LOWER_MASK<<LEFT_OVER_BITS);
+			if ( LEFT_OVER_BITS < 32 ) {
+				if ( SRC_IDX + 1 < value.length ) {
+					value[i] =  value[i] | ((value[SRC_IDX+1] & LOWER_MASK) << LEFT_OVER_BITS);
+				}
+				else
+				if ( negative ) {
+					value[i] =  value[i] | (LOWER_MASK<<LEFT_OVER_BITS);
+				}
 			}
 		}
 		
 		for ( let i=value.length; i >= ENDPOINT; i-- ) {
-			value[i] = negative ? 0 : 0xFFFFFFFF;
+			value[i] = negative ? 0xFFFFFFFF : 0;
 		}
 	}
 	
@@ -1054,7 +1055,7 @@
 		for( let i=value.length-1; i >= SKIPPED_QWORDS; i-- ) {
 			const SRC_IDX = i-SKIPPED_QWORDS;
 			value[i] = value[SRC_IDX] << REAL_SHIFT_BITS;
-			if ( SRC_IDX-1 >= 0 ) {
+			if ( LEFT_OVER_BITS < 32 && SRC_IDX-1 >= 0 ) {
 				value[i] = value[i] | ((value[SRC_IDX-1] & LOWER_MASK) >>> LEFT_OVER_BITS);
 			}
 		}
@@ -1124,9 +1125,8 @@
 		
 		let remainder = a.slice(0);
 		let divider	  = b.slice(0);
-		
 		// region [ Align divider and remainder ]
-		let d_padding = 0, r_padding = 0, count = 64;
+		let d_padding = 0, r_padding = 0, count = 128;
 		while( count-- > 0 ) {
 			if ( (remainder[remainder.length-1] & LEFT_MOST_32) !== 0 ) {
 				break;
@@ -1137,12 +1137,11 @@
 		}
 		remainder = a;
 		
-		count = 64;
+		count = 128;
 		while( count-- > 0 ) {
 			if ( (divider[divider.length-1] & LEFT_MOST_32) !== 0 ) {
 				break;
 			}
-			
 			___LEFT_SHIFT(divider, 1);
 			d_padding++;
 		}

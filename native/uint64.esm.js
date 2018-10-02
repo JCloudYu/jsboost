@@ -372,7 +372,7 @@ export class UInt64 {
 	 * Return an UInt64 instance with value 0xFFFFFFFFFFFFFFFF
 	 * @returns {UInt64}
 	**/
-	static get MAX_UINT64() {
+	static get MAX() {
 		const val = new UInt64();
 		val.hi = 0xFFFFFFFF;
 		val.lo = 0xFFFFFFFF;
@@ -769,7 +769,7 @@ export class Int64 {
 	 * Return an Int64 instance with value 0xFFFFFFFFFFFFFFFF
 	 * @returns {Int64}
 	**/
-	static get MAX_INT64() {
+	static get MAX() {
 		const val = new Int64();
 		val.hi = 0x7FFFFFFF;
 		val.lo = 0xFFFFFFFF;
@@ -780,7 +780,7 @@ export class Int64 {
 	 * Return an Int64 instance with value 0xFFFFFFFFFFFFFFFF
 	 * @returns {Int64}
 	**/
-	static get MIN_INT64() {
+	static get MIN() {
 		const val = new Int64();
 		val.hi = 0x80000000;
 		val.lo = 0x00000000;

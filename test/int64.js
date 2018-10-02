@@ -4,9 +4,9 @@
     
     const { Int64 } = require( '../jsboost' );
     const MAX = Int64.from(Number.MAX_SAFE_INTEGER);
-    const MAX_INT64 = Int64.MAX_INT64;
+    const MAX_INT64 = Int64.MAX;
     const MIN = Int64.from(Number.MIN_SAFE_INTEGER);
-    const MIN_INT64 = Int64.MIN_INT64;
+    const MIN_INT64 = Int64.MIN;
 
     process.stdout.write( "==================== Constructor Test ====================\n\n" );
     {

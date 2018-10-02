@@ -7,7 +7,7 @@
 	const {UInt64} = JSBoost;
 	
 	
-	const uint64 = UInt64.MAX_UINT64;
+	const uint64 = UInt64.MAX;
 	console.log(uint64.toString());
 	console.log(uint64.toString(2));
 	console.log(uint64.toString(16));
