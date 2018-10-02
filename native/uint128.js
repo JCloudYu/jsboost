@@ -20,9 +20,7 @@
 	const MAGIC_STRING_SIGNED	= "\u0000\u0018\u0005";
 	const SERIALIZE_UNSIGNED  = 0;
 	const SERIALIZE_SIGNED	  = 1;
-	const LO = 0, HI = 1;
 	
-	const LEFT_MOST_32    = 0x80000000;
 	const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
 	const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
 	const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
@@ -947,7 +945,7 @@
 			throw new TypeError( "Shift bits number must be a number" );
 		}
 		
-		const negative = (value[value.length-1] & LEFT_MOST_32) !== 0;
+		const negative = (value[value.length-1] & 0x80000000) !== 0;
 	
 		const MAX_BITS	= value.byteLength * 8;
 		if ( BITS >= MAX_BITS ) {
@@ -1083,7 +1081,7 @@
 		// region [ Align divider and remainder ]
 		let d_padding = 0, r_padding = 0, count = 128;
 		while( count-- > 0 ) {
-			if ( (remainder[remainder.length-1] & LEFT_MOST_32) !== 0 ) {
+			if ( (remainder[remainder.length-1] & 0x80000000) !== 0 ) {
 				break;
 			}
 			
@@ -1094,7 +1092,7 @@
 		
 		count = 128;
 		while( count-- > 0 ) {
-			if ( (divider[divider.length-1] & LEFT_MOST_32) !== 0 ) {
+			if ( (divider[divider.length-1] & 0x80000000) !== 0 ) {
 				break;
 			}
 			___LEFT_SHIFT(divider, 1);
@@ -1155,7 +1153,7 @@
 	 * @private
 	**/
 	function ___IS_NEGATIVE(val) {
-		return (val[val.length-1] & LEFT_MOST_32) !== 0;
+		return (val[val.length-1] & 0x80000000) !== 0;
 	}
 	
 	/**
@@ -1386,7 +1384,7 @@
 		const UPPER_BYTE = val.length - 1, BOUNDARY = val.byteLength * 8;
 		let str = '', copy = val.slice(0);
 		for ( let i=0; i<BOUNDARY; i++ ) {
-			str += (copy[UPPER_BYTE] & LEFT_MOST_32) ? '1' : '0';
+			str += (copy[UPPER_BYTE] & 0x80000000) ? '1' : '0';
 			___LEFT_SHIFT(copy, 1);
 		}
 		return str;

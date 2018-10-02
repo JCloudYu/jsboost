@@ -19,7 +19,6 @@ const SERIALIZE_UINT64	  = 0;
 const SERIALIZE_INT64	  = 1;
 const LO = 0, HI = 1;
 
-const LEFT_MOST_32    = 0x80000000;
 const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
 const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
 const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
@@ -1073,7 +1072,7 @@ function ___DIVIDE(a, b) {
 	// region [ Align divider and remainder ]
 	let d_padding = 0, r_padding = 0, count = 64;
 	while( count-- > 0 ) {
-		if ( (remainder[HI] & LEFT_MOST_32) !== 0 ) {
+		if ( (remainder[HI] & 0x80000000) !== 0 ) {
 			break;
 		}
 		
@@ -1084,7 +1083,7 @@ function ___DIVIDE(a, b) {
 	
 	count = 64;
 	while( count-- > 0 ) {
-		if ( (divider[HI] & LEFT_MOST_32) !== 0 ) {
+		if ( (divider[HI] & 0x80000000) !== 0 ) {
 			break;
 		}
 		
@@ -1142,7 +1141,7 @@ function ___IS_ZERO(val) {
  * @private
 **/
 function ___IS_NEGATIVE(val) {
-	return (val[HI] & LEFT_MOST_32) !== 0;
+	return (val[HI] & 0x80000000) !== 0;
 }
 
 /**
@@ -1384,7 +1383,7 @@ function ___GEN_MASK(BITS) {
 function ___TO_BINARY_STRING(val) {
 	let count = 0, str = '', copy = val.slice(0);
 	while(count++ < 64) {
-		str += (copy[1] & LEFT_MOST_32) ? '1' : '0';
+		str += (copy[1] & 0x80000000) ? '1' : '0';
 		___LEFT_SHIFT(copy, 1);
 	}
 	return str;
