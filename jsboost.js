@@ -9,6 +9,7 @@
 	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
 	const {AsyncInvoke}		= require( './native/async-invoke' );
 	const {UInt64, Int64}	= require( './native/uint64' );
+	const {UInt128, Int128}	= require( './native/uint128' );
 	
 	const Base64URL = require( './node/base64url' );
 	const BigNumber = require( './node/bn' );
@@ -24,6 +25,8 @@
 		Base64URL,
 		UInt64,
 		Int64,
+		UInt128,
+		Int128,
 		BigNumber,
 		Serialize,
 		Deserialize
