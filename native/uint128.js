@@ -319,7 +319,7 @@
 		 * @returns {UInt128}
 		**/
 		static deserialize(serialized_str) {
-			if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING_UINT64 ) {
+			if ( serialized_str.length !== 16 && serialized_str.slice(0, 3) !== MAGIC_STRING_UNSIGNED ) {
 				throw new TypeError( "The input serialized string is invalid!" );
 			}
 		
@@ -705,7 +705,7 @@
 		 * @returns {Int128}
 		**/
 		static deserialize(serialized_str) {
-			if ( serialized_str.length !== 16 && serialized_str.slice(0, 4) !== MAGIC_STRING_INT64 ) {
+			if ( serialized_str.length !== 16 && serialized_str.slice(0, 3) !== MAGIC_STRING_SIGNED ) {
 				throw new TypeError( "The input serialized string is invalid!" );
 			}
 			
@@ -771,35 +771,26 @@
 	 * @private
 	**/
 	function ___SERIALIZE(data, type = SERIALIZE_UNSIGNED) {
-		const resultBuff = new Uint8Array(data.buffer);
-		let tail = new Uint8Array(resultBuff.length/2), str = (type === SERIALIZE_UNSIGNED) ? MAGIC_STRING_UNSIGNED : MAGIC_STRING_SIGNED;
-		str += String.fromCodePoint();
-		str += SERIALIZE_MAP[resultBuff[0] >>> 2];
-		tail[0] = (tail[0] | (resultBuff[0] & 0x03)) << 2;
-		str += SERIALIZE_MAP[resultBuff[1] >>> 2];
-		tail[0] =  tail[0] | (resultBuff[1] & 0x03);
+		const dataBuff = new Uint8Array(data.buffer);
+		const TAIL_COUNT = Math.ceil(dataBuff.byteLength/2);
+		const TAIL_BYTES = new Uint8Array(TAIL_COUNT);
 		
-		str += SERIALIZE_MAP[resultBuff[2] >>> 2];
-		tail[1] = (tail[1] | (resultBuff[2] & 0x03)) << 2;
-		str += SERIALIZE_MAP[resultBuff[3] >>> 2];
-		tail[1] =  tail[1] | (resultBuff[3] & 0x03);
+		let serialized = type === SERIALIZE_UNSIGNED ? MAGIC_STRING_UNSIGNED : MAGIC_STRING_SIGNED;
+		serialized += String.fromCodePoint(TAIL_COUNT + dataBuff.byteLength);
 		
-		str += SERIALIZE_MAP[resultBuff[4] >>> 2];
-		tail[2] = (tail[2] | (resultBuff[4] & 0x03)) << 2;
-		str += SERIALIZE_MAP[resultBuff[5] >>> 2];
-		tail[2] =  tail[2] | (resultBuff[5] & 0x03);
 		
-		str += SERIALIZE_MAP[resultBuff[6] >>> 2];
-		tail[3] = (tail[3] | (resultBuff[6] & 0x03)) << 2;
-		str += SERIALIZE_MAP[resultBuff[7] >>> 2];
-		tail[3] =  tail[3] | (resultBuff[7] & 0x03);
+		for(let i=0; i<dataBuff.length; i++) {
+			const TAIL_POS	= (i/2)|0;
+			const SHIFT		= (i % 2) ? 0 : 2;
+			serialized += SERIALIZE_MAP[dataBuff[i] >>> 2];
+			TAIL_BYTES[TAIL_POS] = TAIL_BYTES[TAIL_POS] + ((dataBuff[i] & 0x03) << SHIFT);
+		}
 		
-		str += SERIALIZE_MAP[tail[0]];
-		str += SERIALIZE_MAP[tail[1]];
-		str += SERIALIZE_MAP[tail[2]];
-		str += SERIALIZE_MAP[tail[3]];
+		for( let tail of TAIL_BYTES ) {
+			serialized += SERIALIZE_MAP[tail];
+		}
 		
-		return str;
+		return serialized;
 	}
 	
 	/**
@@ -809,26 +800,17 @@
 	 * @private
 	**/
 	function ___DESERIALIZE(data) {
-		const recovered = new Uint8Array(8);
-		const tail = [
-			SERIALIZE_MAP_R[data[12]],
-			SERIALIZE_MAP_R[data[13]],
-			SERIALIZE_MAP_R[data[14]],
-			SERIALIZE_MAP_R[data[15]]
-		];
+		const RAW_DATA = data.substring(4);
+		const INPUT_DATA_LEN = data.codePointAt(3);
+		const DATA_LENGTH = Math.ceil(INPUT_DATA_LEN/3) * 2;
+		const recovered = new Uint8Array(DATA_LENGTH);
 		
-		recovered[0] = (SERIALIZE_MAP_R[data[ 4]] << 2)|((tail[0]>>2) & 0x03);
-		recovered[1] = (SERIALIZE_MAP_R[data[ 5]] << 2)|( tail[0]     & 0x03);
-		
-		recovered[2] = (SERIALIZE_MAP_R[data[ 6]] << 2)|((tail[1]>>2) & 0x03);
-		recovered[3] = (SERIALIZE_MAP_R[data[ 7]] << 2)|( tail[1]     & 0x03);
-		
-		
-		recovered[4] = (SERIALIZE_MAP_R[data[ 8]] << 2)|((tail[2]>>2) & 0x03);
-		recovered[5] = (SERIALIZE_MAP_R[data[ 9]] << 2)|( tail[2]     & 0x03);
-		
-		recovered[6] = (SERIALIZE_MAP_R[data[10]] << 2)|((tail[3]>>2) & 0x03);
-		recovered[7] = (SERIALIZE_MAP_R[data[11]] << 2)|( tail[3]     & 0x03);
+		for( let i=0; i<DATA_LENGTH; i++ ) {
+			const TAIL_POS	= DATA_LENGTH + ((i/2)|0);
+			const SHIFT		= (i % 2) ? 0 : 2;
+			recovered[i] = (SERIALIZE_MAP_R[RAW_DATA[i]] << 2) |
+						   ((SERIALIZE_MAP_R[RAW_DATA[TAIL_POS]] >> SHIFT) & 0x03);
+		}
 		
 		return new Uint32Array(recovered.buffer);
 	}
