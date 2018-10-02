@@ -442,88 +442,123 @@
 		
 		process.stdout.write("    Testing Int128.or... ");
 		{
-			const ANSWER = [0x00000001, 0xFFE00000];
+			const ANSWER = [0x00000001, 0xFFE00000, 0xFFFFFFFF, 0xFFFFFFFF];
 			const TEST = MIN.or(Int128.ZERO);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.not... ");
 		{
-			const ANSWER = [0xFFFFFFFE, 0x001FFFFF];
+			const ANSWER = [0xFFFFFFFE, 0x001FFFFF, 0x00000000, 0x00000000];
 			const TEST = MIN.not();
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.xor... ");
 		{
-			const ANSWER = [0x00000000, 0x00000000];
+			const ANSWER = [0x00000000, 0x00000000, 0x00000000, 0x00000000];
 			const TEST = MIN.xor(MIN);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.rshift (8 bits)... ");
 		{
-			const ANSWER = [0x00000000, 0xFFFFE000];
+			const ANSWER = [0x00000000, 0xFFFFE000, 0xFFFFFFFF, 0xFFFFFFFF];
 			const TEST = MIN.rshift(8);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.rshift (40 bits)... ");
 		{
-			const ANSWER = [0xFFFFE000, 0xFFFFFFFF];
+			const ANSWER = [0xFFFFE000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF];
 			const TEST = MIN.rshift(40);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.lshift (8 bits)... ");
 		{
-			const ANSWER = [0x00000100, 0xE0000000];
+			const ANSWER = [0x00000100, 0xE0000000, 0xFFFFFFFF, 0xFFFFFFFF];
 			const TEST = MIN.lshift(8);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
+			}
+			else {
+				process.stdout.write("failed!\n");
 			}
 		}
 		
 		process.stdout.write("    Testing Int128.lshift (40 bits)... ");
 		{
-			const ANSWER = [0x00000000, 0x00000100];
+			const ANSWER = [0x00000000, 0x00000100, 0xE0000000, 0xFFFFFFFF];
 			const TEST = MIN.lshift(40);
-			if( TEST.lo !== ANSWER[0] || TEST.hi !== ANSWER[1] ){
-				process.stdout.write("failed!\n");
+			let passed = true;
+			for ( let i=0; i < ANSWER.length; i++ ) {
+				passed = passed && (ANSWER[i] === TEST._ta[i]);
 			}
-			else{
+			
+			if ( passed ) {
 				process.stdout.write("passed!\n");
 			}
+			else {
+				process.stdout.write("failed!\n");
+			}
 		}
-		/*
+		
 		process.stdout.write("\nTesting rendering operations...\n");
 		process.stdout.write("    Testing Int128.toString()... ");
 		{
@@ -534,7 +569,7 @@
 		
 		process.stdout.write("    Testing Int128.toString(2)... ");
 		{
-			const ANSWER = "0000000000011111111111110000000000000000000000001111111111111111";
+			const ANSWER = "00000000000000000000000000000000000000000000000000000000000000000000000000011111111111110000000000000000000000001111111111111111";
 			const TEST = Int128.from(0x1FFF000000FFFF).toString(2);
 			process.stdout.write((ANSWER !== TEST) ? "failed!\n" : "passed!\n");
 		}
@@ -546,12 +581,11 @@
 			process.stdout.write((ANSWER !== TEST) ? "failed!\n" : "passed!\n");
 		}
 		
-				process.stdout.write("\nTesting serialization... ");
-				{
-					const INPUT = JSON.stringify(MIN.serialize());
-					const TEST = Int128.deserialize(JSON.parse(INPUT));
-					process.stdout.write((MIN.compare(TEST) !== 0) ? "failed!\n" : "passed!\n");
-				}
-		*/
+		process.stdout.write("\nTesting serialization... ");
+		{
+			const INPUT = JSON.stringify(MIN.serialize());
+			const TEST = Int128.deserialize(JSON.parse(INPUT));
+			process.stdout.write((MIN.compare(TEST) !== 0) ? "failed!\n" : "passed!\n");
+		}
 	}
 })();
