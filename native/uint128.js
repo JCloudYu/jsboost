@@ -375,10 +375,7 @@
 		 * @returns {UInt128}
 		**/
 		static get MAX_UINT64() {
-			const val = new UInt128();
-			val.hi = 0xFFFFFFFF;
-			val.lo = 0xFFFFFFFF;
-			return val;
+			return new UInt128([0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]);
 		}
 		
 		/**
@@ -786,10 +783,7 @@
 		 * @returns {Int128}
 		**/
 		static get MAX_INT64() {
-			const val = new Int128();
-			val.hi = 0x7FFFFFFF;
-			val.lo = 0xFFFFFFFF;
-			return val;
+			return new Int128([0x7FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF]);
 		}
 		
 		/**
@@ -797,10 +791,7 @@
 		 * @returns {Int128}
 		**/
 		static get MIN_INT64() {
-			const val = new Int128();
-			val.hi = 0x80000000;
-			val.lo = 0x00000000;
-			return val;
+			return new Int128([0x80000000, 0x00000000, 0x00000000, 0x00000000]);
 		}
 		
 		/**
