@@ -54,4 +54,28 @@
 			process.stdout.write('passed!\n');
 		}
 	}
+
+	process.stdout.write('    Testing bn convert to UInt64 (conversion)... ');
+	{
+		let answer = '18446744073709551615';
+		let bn = new BigNumber('18446744073709551615');
+		if (UInt64.from(bn).toString() !== answer) {
+			process.stdout.write('failed!\n');
+		}
+		else {
+			process.stdout.write('passed!\n');
+		}
+	}
+
+	process.stdout.write('    Testing bn convert to UInt64 (conversion)... ');
+	{
+		let answer = '1';
+		let bn = new BigNumber('-18446744073709551615');
+		if (UInt64.from(bn).toString() !== answer) {
+			process.stdout.write('failed!\n');
+		}
+		else {
+			process.stdout.write('passed!\n');
+		}
+	}
 })();
