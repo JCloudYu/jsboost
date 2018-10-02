@@ -314,29 +314,6 @@
 			
 			this._ta = _val.slice(0);
 		}
-		get hi() {
-			return this._ta[HI];
-		}
-		set hi(value) {
-			const val = parseInt(value);
-			if ( Number.isNaN(val) ) {
-				throw new TypeError( "Given value is not a valid UInt32 format" );
-			}
-			
-			this._ta[HI] = val >>> 0;
-		}
-		get lo() {
-			return this._ta[LO];
-		}
-		set lo(value) {
-			const val = parseInt(value);
-			if ( Number.isNaN(val) ) {
-				throw new TypeError( "Given value is not a valid UInt32 format" );
-			}
-			
-			this._ta[LO] = val >>> 0;
-		}
-		
 		
 		/**
 		 * Deserialize a serialized data and return the corresponding UInt128 instance
@@ -721,28 +698,6 @@
 			}
 			
 			this._ta = _val.slice(0);
-		}
-		get hi() {
-			return this._ta[HI];
-		}
-		set hi(value) {
-			const val = parseInt(value);
-			if ( Number.isNaN(val) ) {
-				throw new TypeError( "Given value is not a valid UInt32 format" );
-			}
-			
-			this._ta[HI] = val >>> 0;
-		}
-		get lo() {
-			return this._ta[LO];
-		}
-		set lo(value) {
-			const val = parseInt(value);
-			if ( Number.isNaN(val) ) {
-				throw new TypeError( "Given value is not a valid UInt32 format" );
-			}
-			
-			this._ta[LO] = val >>> 0;
 		}
 		
 		
