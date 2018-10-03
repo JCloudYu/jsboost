@@ -1267,6 +1267,7 @@
 			value = Math.abs(value);
 		}
 		
+		buff.fill(0);
 		value = Math.floor(value);
 		buff[0] = value % OVERFLOW32_MAX;
 		value = Math.floor(value / OVERFLOW32_MAX);
@@ -1284,6 +1285,7 @@
 	 * @private
 	**/
 	function ___PARSE_NUMBER_UNSIGNED(buff, value) {
+		buff.fill(0);
 		value = Math.floor(value);
 		buff[0] = value % OVERFLOW32_MAX;
 		value = Math.floor(value / OVERFLOW32_MAX);
