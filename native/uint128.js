@@ -1034,8 +1034,8 @@
 			for ( let j=i; j>=0; j-- ) {
 				val += A[j] * B[i-j];
 			}
-			overflow = (val / OVERFLOW16_MAX) | 0;
-			FINAL[i] = val % OVERFLOW16_MAX;
+			overflow = val >>> 16;
+			FINAL[i] = val;
 		}
 	}
 	
@@ -1308,14 +1308,20 @@
 			negative = 0;
 		}
 		
+		
+		let STEPPER = temp.slice(0);
+		for( let i=0; i<STEPPER.length; i++ ) {
+			STEPPER[i] = DECIMAL_STEPPER[i] || 0;
+		}
+		
 		buff.fill(0);
 		let increase = 0;
-		while( value.length > 0 ) {
+		while( value.length  > 0 ) {
 			let int = parseInt(value.substring(value.length - 9, value.length), 10);
 			
 			___PARSE_NUMBER_UNSIGNED(temp, int);
 			for ( let i=0; i<increase; i++ ) {
-				___MULTIPLY(temp, DECIMAL_STEPPER);
+				___MULTIPLY(temp, STEPPER);
 			}
 			___ADD(buff, temp);
 			
