@@ -22,7 +22,6 @@
 	const SERIALIZE_SIGNED	  = 1;
 	
 	const OVERFLOW32_MAX  = (0xFFFFFFFF >>> 0) + 1;
-	const OVERFLOW16_MAX  = (0xFFFF >>> 0) + 1;
 	const INTEGER_FORMAT  = /^[+-]?[0-9]+$/;
 	const HEX_FORMAT	  = /^0x[0-9A-Fa-f]+$/;
 	const BIN_FORMAT	  = /^0b[01]+$/;
