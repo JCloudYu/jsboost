@@ -32,7 +32,7 @@ console.log(result.toString());     // 760056543044267246001
 const { Int64, UInt64 } = require('jsboost');
 
 // constructor
-const Num_Int64 = Int64.from('9007199254740991');       // argument can be a number, string or Uint32Array (little-endian)
+const Num_Int64 = Int64.from('9007199254740991');       // argument can be a number, string or Number Array (little-endian)
 const Num_UInt64 = UInt64.from([0x000003E7, 0x000002000]);
 
 // properties
@@ -65,7 +65,7 @@ console.log(result.toString());     // 30000000000000
 const { Int128, UInt128 } = require('jsboost');
 
 // constructor
-const Num_Int128 = Int128.from('9007199254740991');         // argument can be a number, string or Uint32Array (little-endian)
+const Num_Int128 = Int128.from('9007199254740991');         // argument can be a number, string or Number Array (little-endian)
 const Num_UInt128 = UInt128.from([0x000003E7, 0x000002000, 0x00000000, 0x00000000]);
 
 // properties
