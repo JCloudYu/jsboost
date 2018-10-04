@@ -15,6 +15,7 @@
 		"test-int64-to-bn": "node ./test/int64-to-bn",
 		"test-uint64-to-bn": "node ./test/uint64-to-bn",
 		"test-base64url": "node ./test/base64url.js",
+		"test-crypto": "node ./test/crypto.js",
 		"test-serialization": "node ./test/serialization.js",
 		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
 		"test-event-emitter": "node ./test/event-emitter.js",
