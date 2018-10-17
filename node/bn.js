@@ -101,8 +101,7 @@
         MAX = 1E9,                                   // 0 to MAX_INT32
         crypto = null;                               // crypto module
 
-    const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url'),    // base64url module
-          { Int64, UInt64 } = require('../native/uint64');                                  // jsboost module
+    const { encode: base64urlEncode, decode: base64urlDecode } = require('./base64url');    // base64url module
 
     /*
      * Create and return a BigNumber constructor.
