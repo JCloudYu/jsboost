@@ -144,7 +144,7 @@ console.log(deserializeData);
 Only support curve "secp256k1" and algorithm "SHA256withECDSA"
 
 ```javascript
-const { ECDSA, Signature } = require('../jsboost');
+const { Signature, ECDSA, KEYUTIL } = require('../jsboost');
 
 let curve = 'secp256k1';
 let sigAlg = 'SHA256withECDSA';
