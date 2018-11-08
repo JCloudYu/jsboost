@@ -22,7 +22,13 @@
 	
 	exports.JSAssert = (truthy_test, message='Assertion fail!')=>{
 		if ( truthy_test ) return;
-		throw new JSAssertionError( message );
+		
+		if ( message instanceof Error ) {
+			throw message;
+		}
+		else {
+			throw new JSAssertionError( message );
+		}
 	};
 	
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
