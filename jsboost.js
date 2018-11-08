@@ -5,7 +5,7 @@
 (()=>{
 	"use strict";
 	
-	const {JSAseert}		= require( './native/js-assert' );
+	const {JSAssert}		= require( './native/js-assert' );
 	const {EventEmitter}	= require( './native/event-emitter' );
 	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
 	const {AsyncInvoke}		= require( './native/async-invoke' );
@@ -26,6 +26,6 @@
 	
 		Base64URL,
 		BigNumber,
-		JSAseert
+		JSAssert
 	};
 })();

@@ -20,15 +20,47 @@
 		}
 	}
 	
-	exports.JSAssert = (truthy_test, message='Assertion fail!')=>{
-		if ( truthy_test ) return;
-		
-		if ( message instanceof Error ) {
-			throw message;
+	/**
+	 * Perform an assertion check to given test expression
+	 *
+	 * @param {Function|*} test A function or a normal value that can be evaluated as truthy or falsy
+	 * @param {Function|Error|String} message A function that is used to handle the error outcome
+	**/
+	exports.JSAssert = (test, message='Assertion fail!')=>{
+		let error = test ? null : true;
+		if ( typeof test === "function" ) {
+			try {
+				test();
+				error = null;
+			} catch(e) {
+				error = e;
+			}
 		}
-		else {
-			throw new JSAssertionError( message );
+		if ( !error ) return;
+		
+		
+		
+		let type = typeof message;
+		let content = message;
+		if ( type === "function" ) {
+			try {
+				content = message(error);
+			}
+			catch(e) {
+				content = e;
+			}
+		}
+		else
+		if ( !(content instanceof Error) ) {
+			content = new JSAssertionError(content);
+		}
+		
+		
+		
+		if ( content instanceof Error ) {
+			throw content;
 		}
 	};
+	exports.JSAssert.JSAssertionError = JSAssertionError;
 	
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
