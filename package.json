@@ -1,6 +1,6 @@
 {
 	"name": "jsboost",
-	"version": "0.1.10",
+	"version": "0.2.0",
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "jsboost.js",
 	"scripts": {
@@ -16,7 +16,6 @@
 		"test-uint64-to-bn": "node ./test/uint64-to-bn",
 		"test-base64url": "node ./test/base64url.js",
 		"test-crypto": "node ./test/crypto.js",
-		"test-serialization": "node ./test/serialization.js",
 		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
 		"test-event-emitter": "node ./test/event-emitter.js",
 		"test-async-invoke": "node ./test/async-invoke.js"

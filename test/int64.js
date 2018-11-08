@@ -2,7 +2,7 @@
 (()=>{
     "use strict";
     
-    const { Int64 } = require( '../jsboost' );
+    const { Int64 } = require( '../native/legacy/uint64' );
     const MAX = Int64.from(Number.MAX_SAFE_INTEGER);
     const MAX_INT64 = Int64.MAX;
     const MIN = Int64.from(Number.MIN_SAFE_INTEGER);

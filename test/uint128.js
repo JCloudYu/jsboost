@@ -5,7 +5,7 @@
 (()=>{
 	"use strict";
 	
-	const {UInt128} = require( '../jsboost' );
+	const {UInt128} = require( '../native/legacy/uint128' );
 	const MAX = UInt128.from(Number.MAX_SAFE_INTEGER);
     const MAX_UINT128 = UInt128.MAX;
     

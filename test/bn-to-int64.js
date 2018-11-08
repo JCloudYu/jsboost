@@ -1,6 +1,7 @@
 (() => {
 
-    const { Int64, BigNumber } = require('../jsboost');
+    const {BigNumber} = require('../jsboost');
+    const {Int64} = require( '../native/legacy/uint64' );
 
     // 9007199254740991
 	const MAX = new BigNumber(Number.MAX_SAFE_INTEGER);
