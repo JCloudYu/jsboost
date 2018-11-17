@@ -9,9 +9,10 @@
 	const {EventEmitter}	= require( './native/event-emitter' );
 	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
 	const {AsyncInvoke}		= require( './native/async-invoke' );
+	const Base64URL			= require( './node/base64url' );
+	const BigNumber			= require( './node/bn' );
+	const StateMachine		= require('./native/state-machine');
 	const {KJUR, Signature, ECDSA, KEYUTIL} = require( './native/crypto' );
-	const Base64URL = require( './node/base64url' );
-	const BigNumber = require( './node/bn' );
 	
 	
 	
@@ -26,6 +27,7 @@
 	
 		Base64URL,
 		BigNumber,
-		JSAssert
+		JSAssert,
+		StateMachine
 	};
 })();

@@ -18,7 +18,8 @@
 		"test-crypto": "node ./test/crypto.js",
 		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
 		"test-event-emitter": "node ./test/event-emitter.js",
-		"test-async-invoke": "node ./test/async-invoke.js"
+		"test-async-invoke": "node ./test/async-invoke.js",
+		"test-state-machine": "node ./test/state-machine.js"
 	},
 	"repository": {
 		"type": "git",
@@ -29,7 +30,7 @@
 		"Boost"
 	],
 	"author": "JCloudYu",
-	"license": "WTFPL",
+	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/JCloudYu/jsboost/issues"
 	},
