@@ -73,7 +73,7 @@
 					case LOG_LEVEL.NOTICE:
 					case LOG_LEVEL.INFO:
 					case LOG_LEVEL.DEBUG:
-						BUILT_IN_CONSOLE_LOG("FUCK!!!!", ...data);
+						BUILT_IN_CONSOLE_LOG(...data);
 						break;
 					default:
 						break;
