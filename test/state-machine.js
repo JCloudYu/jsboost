@@ -5,7 +5,7 @@
 (()=>{
 	"use strict";
 	
-	const StateMachine = require( '../jsboost' );
+	const {StateMachine} = require( '../jsboost' );
 	
 	// ab*c{2}d
 	process.stdout.write( "Creating machine that accept ab*c{2}d... " );

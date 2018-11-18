@@ -5,6 +5,7 @@
 (()=>{
 	"use strict";
 	
+	const {LevelfyLogger}	= require( './native/levelfy-logger' );
 	const {JSAssert}		= require( './native/js-assert' );
 	const {EventEmitter}	= require( './native/event-emitter' );
 	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
@@ -28,6 +29,7 @@
 		Base64URL,
 		BigNumber,
 		JSAssert,
-		StateMachine
+		StateMachine,
+		LevelfyLogger
 	};
 })();
