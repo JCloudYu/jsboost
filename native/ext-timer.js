@@ -22,15 +22,14 @@
 		
 		return timeout_cb;
 	};
-	
 	exports.SingletonInterval=()=>{
 		let hTimeout = null;
 		const timeout_cb = (cb, interval=0, ...args)=>{
 			if ( hTimeout ) { clearTimeout(hTimeout); }
 			
 			hTimeout = setTimeout(___DO_TIMEOUT, interval);
-			function ___DO_TIMEOUT() {
-				cb(...args);
+			async function ___DO_TIMEOUT() {
+				await cb(...args);
 				hTimeout = setTimeout(___DO_TIMEOUT, interval);
 			}
 		};
