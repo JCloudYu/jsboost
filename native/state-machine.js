@@ -71,7 +71,9 @@
 				}, enumerable:true
 			},
 			state:{
-				get:()=>_current_state, enumerable:true, configurable:false
+				get:()=>_current_state,
+				set:(val)=>{_state_instance.state = val;},
+				enumerable:true, configurable:false
 			},
 			finished: {
 				get:()=>_current_state==='fin', enumerable:true, configurable:false
