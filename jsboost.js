@@ -10,6 +10,7 @@
 	const {EventEmitter}	= require( './native/event-emitter' );
 	const {DOMEventEmitter} = require( './native/dom-event-emitter' );
 	const {AsyncInvoke}		= require( './native/async-invoke' );
+	const ExtPromise		= require( './native/ext-promise' );
 	const ExtTimer			= require( './native/ext-timer' );
 	
 	const Base64URL			= require( './node/base64url' );
@@ -33,6 +34,7 @@
 		JSAssert,
 		StateMachine,
 		LevelfyLogger,
-		ExtTimer
+		ExtTimer,
+		ExtPromise
 	};
 })();
