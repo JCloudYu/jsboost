@@ -5,6 +5,13 @@
 ((exports)=>{
 	"use strict";
 	
+	/**
+	 * Similar to Promise.all, but this function will wait and returns for all the promises util their states are determined
+	 *
+	 * @param {Promise[]|*[]} promise_queue
+	 * @return {Promise}
+	 * @constructor
+	**/
 	exports.WaitAll=(promise_queue=[])=>{
 		if ( !Array.isArray(promise_queue) ){
 			promise_queue = [promise_queue];
@@ -38,5 +45,19 @@
 				});
 			}
 		});
+	};
+	
+	/**
+	 * Create a promise whose resolve and reject can be triggered passively
+	 *
+	 * @returns {{promise:Promise<*>, resolve:Function, reject:Function}}
+	**/
+	exports.PassivePromise=()=>{
+		const compact = {};
+		compact.promise = new Promise((resolve, reject)=>{
+			compact.resolve=resolve;
+			compact.reject=reject;
+		});
+		return compact;
 	};
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));

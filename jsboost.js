@@ -12,6 +12,7 @@
 	const {AsyncInvoke}		= require( './native/async-invoke' );
 	const ExtPromise		= require( './native/ext-promise' );
 	const ExtTimer			= require( './native/ext-timer' );
+	const {ThrottledQueue}	= require( './native/throttled-queue' );
 	
 	const Base64URL			= require( './node/base64url' );
 	const BigNumber			= require( './node/bn' );
@@ -35,6 +36,7 @@
 		StateMachine,
 		LevelfyLogger,
 		ExtTimer,
-		ExtPromise
+		ExtPromise,
+		ThrottledQueue
 	};
 })();
