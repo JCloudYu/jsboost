@@ -17,6 +17,7 @@
 	const Base64URL			= require( './node/base64url' );
 	const BigNumber			= require( './node/bn' );
 	const StateMachine		= require('./native/state-machine');
+	const {TypeOf}			= require( './native/misc' );
 	const {KJUR, Signature, ECDSA, KEYUTIL} = require( './native/crypto' );
 	
 	
@@ -37,6 +38,7 @@
 		LevelfyLogger,
 		ExtTimer,
 		ExtPromise,
-		ThrottledQueue
+		ThrottledQueue,
+		TypeOf
 	};
 })();
