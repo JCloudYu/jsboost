@@ -14,6 +14,8 @@ export * from "./lib/levelfy-logger.esm.js";
 export * from "./lib/state-machine.esm.js";
 export * from "./lib/throttled-queue.esm.js";
 export * from "./lib/ext-type.esm.js";
+export * from "./lib/event-emitter.esm.js";
+export * from "./lib/dom-event-emitter.esm.js";
 
 
 
