@@ -16,6 +16,7 @@ export * from "./lib/throttled-queue.esm.js";
 export * from "./lib/ext-type.esm.js";
 export * from "./lib/event-emitter.esm.js";
 export * from "./lib/dom-event-emitter.esm.js";
+export * from "./lib/ext-object.esm.js";
 
 
 
