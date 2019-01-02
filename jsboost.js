@@ -12,12 +12,12 @@
 	const {AsyncInvoke}		= require( './native/async-invoke' );
 	const ExtPromise		= require( './native/ext-promise' );
 	const ExtTimer			= require( './native/ext-timer' );
+	const {ObjectDefineProperties, ObjectDefineProperty, ObjectMerge, TypeOf} = require( './native/ext-object' );
 	const {ThrottledQueue}	= require( './native/throttled-queue' );
 	
 	const Base64URL			= require( './node/base64url' );
 	const BigNumber			= require( './node/bn' );
 	const StateMachine		= require('./native/state-machine');
-	const {TypeOf}			= require( './native/misc' );
 	const {KJUR, Signature, ECDSA, KEYUTIL} = require( './native/crypto' );
 	
 	
@@ -39,6 +39,10 @@
 		ExtTimer,
 		ExtPromise,
 		ThrottledQueue,
+		
+		ObjectDefineProperty,
+		ObjectDefineProperties,
+		ObjectMerge,
 		TypeOf
 	};
 })();
