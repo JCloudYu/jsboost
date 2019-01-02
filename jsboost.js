@@ -20,6 +20,8 @@
 	const StateMachine		= require('./native/state-machine');
 	const {KJUR, Signature, ECDSA, KEYUTIL} = require( './native/crypto' );
 	
+	const {ThrottledTimeout, ThrottledTimer} = ExtTimer;
+	
 	
 	
 	module.exports = {
@@ -39,6 +41,8 @@
 		ExtTimer,
 		ExtPromise,
 		ThrottledQueue,
+		ThrottledTimeout,
+		ThrottledTimer,
 		
 		ObjectDefineProperty,
 		ObjectDefineProperties,
