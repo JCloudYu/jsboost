@@ -5,10 +5,10 @@
 ((exports)=>{
 	"use strict";
 	
-	exports.SingletonTimeout  = SingletonTimeout;
-	exports.SingletonInterval = SingletonInterval;
+	exports.ThrottledTimeout = exports.SingletonTimeout  = ThrottledTimeout;
+	exports.ThrottledTimer	 = exports.SingletonInterval = ThrottledTimer;
 	
-	function SingletonTimeout() {
+	function ThrottledTimeout() {
 		let _scheduled	= null;
 		let _executing	= false;
 		let _hTimeout	= null;
@@ -62,8 +62,8 @@
 			_scheduled = null;
 		}
 	}
-	function SingletonInterval() {
-		const _timeout = SingletonTimeout();
+	function ThrottledTimer() {
+		const _timeout = ThrottledTimeout();
 		const timeout_cb = (cb, interval=0, ...args)=>{
 			const ___DO_TIMEOUT=()=>{
 				_timeout(___DO_TIMEOUT, interval);
