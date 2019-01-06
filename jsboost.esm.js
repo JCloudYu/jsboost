@@ -4,6 +4,7 @@
 **/
 import * as JSRSASign from "./lib/crypto.esm.js";
 import * as ANSIColor from "./lib/ansi-vt100-colors.esm.js";
+import * as Misc from "./lib/misc.esm.js";
 
 export * from "./lib/base32.esm.js";
 export * from "./lib/base64.esm.js";
@@ -20,5 +21,5 @@ export * from "./lib/ext-object.esm.js";
 
 
 export const Crypto = { JSRSASign };
-export { ANSIColor };
+export { ANSIColor, Misc };
 
