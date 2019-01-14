@@ -14,6 +14,7 @@
 	const ExtTimer			= require( './native/ext-timer' );
 	const {ObjectDefineProperties, ObjectDefineProperty, ObjectMerge, TypeOf} = require( './native/ext-object' );
 	const {ThrottledQueue}	= require( './native/throttled-queue' );
+	const ANSIColor			= require( './native/ansi-vt100-colors' );
 	
 	const Base64URL			= require( './node/base64url' );
 	const BigNumber			= require( './node/bn' );
@@ -47,6 +48,7 @@
 		ObjectDefineProperty,
 		ObjectDefineProperties,
 		ObjectMerge,
-		TypeOf
+		TypeOf,
+		ANSIColor
 	};
 })();
