@@ -1,6 +1,6 @@
 {
 	"name": "jsboost",
-	"version": "0.9.4",
+	"version": "0.9.5",
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "jsboost.js",
 	"scripts": {

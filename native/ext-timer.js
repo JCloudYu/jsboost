@@ -65,14 +65,16 @@
 	function ThrottledTimer() {
 		const _timeout = ThrottledTimeout();
 		const timeout_cb = (cb, interval=0, ...args)=>{
-			const ___DO_TIMEOUT=()=>{
+			const ___DO_TIMEOUT=async()=>{
 				_timeout(___DO_TIMEOUT, interval);
 				
-				Promise.resolve(cb(...args))
-				.catch((e)=>{
+				try {
+					await cb(...args);
+				}
+				catch(e) {
 					_timeout.clear();
 					throw e;
-				});
+				}
 			};
 			_timeout(___DO_TIMEOUT, interval, ...args);
 		};
