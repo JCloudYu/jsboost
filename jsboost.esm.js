@@ -2,7 +2,6 @@
  *	Author: JCloudYu
  *	Create: 2018/12/22
 **/
-import * as JSRSASign from "./lib/crypto.esm.js";
 import * as ANSIColor from "./lib/ansi-vt100-colors.esm.js";
 import * as Web from "./lib/web/web.esm.js";
 
@@ -21,6 +20,5 @@ export * from "./lib/string-cache.esm.js";
 
 
 
-export const Crypto = { JSRSASign };
 export { ANSIColor, Web };
 

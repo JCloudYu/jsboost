@@ -4,7 +4,6 @@ Thumbs.db
 .idea
 .vscode
 
-node_modules
 package-lock.json
 
-*.ignored.js
+.ig.*

@@ -1,21 +1,12 @@
 {
 	"name": "jsboost",
-	"version": "1.0.28",
+	"version": "1.0.29",
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "jsboost.mjs",
-	"scripts": {
-		"test": "node ./test.js",
-		"test-bn": "node ./test/bn.js",
-		"test-base64url": "node ./test/base64url.js",
-		"test-crypto": "node ./test/crypto.js",
-		"test-dom-event-emitter": "node ./test/dom-event-emitter.js",
-		"test-event-emitter": "node ./test/event-emitter.js",
-		"test-async-invoke": "node ./test/async-invoke.js",
-		"test-state-machine": "node ./test/state-machine.js"
-	},
+	"scripts": {},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/JCloudYu/jsboost.git"
+		"url":  "git+https://github.com/JCloudYu/jsboost.git"
 	},
 	"keywords": [
 		"Javascript",
