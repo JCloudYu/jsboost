@@ -80,6 +80,10 @@
 		if ( CONTROL_STACK.length > 1 ) { CONTROL_STACK.pop(); }
 		return CONTROL_STACK[CONTROL_STACK.length-1].begin;
 	}, enumerable:true});
+	Object.defineProperty(COLOR_CONTROL, 'purge', {get:()=>{
+		CONTROL_STACK.splice(1);
+		return CONTROL_STACK[0].begin;
+	}, enumerable:true});
 	
 	
 	
