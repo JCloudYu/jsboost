@@ -7,6 +7,7 @@
 	
 	exports.ThrottledTimeout = exports.SingletonTimeout  = ThrottledTimeout;
 	exports.ThrottledTimer	 = exports.SingletonInterval = ThrottledTimer;
+	exports.Idle = Idle;
 	
 	function ThrottledTimeout() {
 		let _scheduled	= null;
@@ -83,4 +84,8 @@
 		};
 		return timeout_cb;
 	}
+	function Idle(duration=0) {
+		return new Promise((resolve)=>{setTimeout(resolve, duration)});
+	}
+
 })((typeof window !== "undefined") ? window : (typeof module !== "undefined" ? module.exports : {}));
