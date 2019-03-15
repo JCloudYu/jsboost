@@ -1,72 +1,36 @@
 # JS Boost #
+This library is aimed to provide varieties of javascript tools for developers in both native browser and nodejs platform.
 
-## For user ##
-
-### How to use ###
-
-#### Base64Url ####
-
+## Use in native browser environment ##
+Use following line to import the module.
 ```javascript
-const { encode, decode } = require('jsboost').Base64URL;
-let str = 'BC';
-let encodeStr = encode(str);
-let decodeStr = decode(encodeStr);
-// Origin: BC, Encode: QkM, Decode: BC
-console.log(`Origin: ${str}, Encode: ${encodeStr}, Decode: ${decodeStr}`);
+import * as JSBoost from "https://cdn.jsdelivr.net/gh/JCloudYu/jsboost/jsboost.esm.js";
 ```
 
-#### Crypto ####
-
-Only support curve "secp256k1" and algorithm "SHA256withECDSA"
-
+**Note that the whole module registered in npm is browser compatible. So you can use following line if you want to install and control the version via npm.**
 ```javascript
-const { Signature, ECDSA, KEYUTIL } = require('../jsboost');
-
-let curve = 'secp256k1';
-let sigAlg = 'SHA256withECDSA';
-
-// generate keys
-let ec = new ECDSA({ curve });
-let keypair = ec.generateKeyPairHex();
-let keys = {
-    prvkey: keypair.ecprvhex,               // private key
-    pubkey: keypair.ecpubhex                // public key
-};
-
-// sign message
-let sig = new Signature({ alg: sigAlg });
-sig.init({ d: keys.prvkey, curve });
-sig.updateString('hello world');
-let sigValueHex = sig.sign();               // sign hex string
-
-// verify string
-let sig = new Signature({ alg: sigAlg, prov: 'cryptojs/jsrsa' });
-sig.init({ xy: keys.pubkey, curve });
-sig.updateString('hello world');
-let isValid = sig.verify(sigValueHex);      // bool
+import * as JSBoost from "./node_modules/jsboost/jsboost.esm.js";
 ```
 
-* Please refer to [ECDSA](https://kjur.github.io/jsrsasign/api/symbols/KJUR.crypto.ECDSA.html) or [Signature](https://kjur.github.io/jsrsasign/api/symbols/KJUR.crypto.Signature.html) for other usages.
+## Use in NodeJS environment ##
+Install the package via following line.
+```sh
+npm install jsboost
+```
 
----
+Use following line to import the module.
+```javascript
+import * from "jsboost";
+```
 
-## For maintainer ##
+### Some tiny preparations to use this module ###
+#### Distinct ES6 module from extension is SHIT ####
+This module is designed to run in browser and nodejs environment. However, the normal web server doesnt recognize _**mjs**_ extension by default, and I don't want to maintain two piles of codes. Plus I don't really like the this _**mjs**_ shit.  So I decide to make this library to natively support the browser environment and have the nodejs users to to some preparation works to use this library. ( After all, nodejs is for backend scripts, you can do whatever you want, including this tiny preparations... )
 
-### Install project ###
+#### The prepartions ####
+You have to use the following lines to execute node js to enable es modules and load the corresponding loader. 
 
-* Clone project:
-    > git clone \<project-url\>
-
-* Install dependency package:
-    > npm install
-
-### Build and Run ###
-
-* Run test-bn (use npm):
-    > npm run test-bn
-
-* Run test-base64url (use npm):
-    > npm run test-base64url
-
-* Run test-serialization (use npm):
-    > npm run test-serialization
+_**The esm-js.loader.mjs is located in this repo at position .\_/esm-js.loader.js**_
+```sh
+node --experimental-modules --loader esm-js.loader.mjs [YOUR BOOT SCRIPT]
+```
