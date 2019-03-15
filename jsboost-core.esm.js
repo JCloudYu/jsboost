@@ -16,6 +16,7 @@ export * from "./lib/event-emitter.esm.js";
 export * from "./lib/dom-event-emitter.esm.js";
 export * from "./lib/ext-object.esm.js";
 export * from "./lib/string-cache.esm.js";
+export * from "./lib/versioning.esm.js";
 
 
 

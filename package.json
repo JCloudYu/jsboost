@@ -3,7 +3,9 @@
 	"version": "1.2.5",
 	"description": "A tiny library that extends the capability of javascript",
 	"main": "jsboost.mjs",
-	"scripts": {},
+	"scripts": {
+		"test": "node --experimental-modules --loader ./._/loader.mjs unit-test.mjs"
+	},
 	"repository": {
 		"type": "git",
 		"url":  "git+https://github.com/JCloudYu/jsboost.git"
