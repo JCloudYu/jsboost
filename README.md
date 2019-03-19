@@ -34,3 +34,22 @@ _**The esm-js.loader.mjs is located in this repo at position .\_/esm-js.loader.j
 ```sh
 node --experimental-modules --loader esm-js.loader.mjs [YOUR BOOT SCRIPT]
 ```
+
+## Module & API List ##
+- **jsboost**
+    - **\_\_\_IS\_WIN** _**( NodeJS only )**_
+        This is a boolean value that indicates whether current _**NODEJS**_ instance is executing on Windows platform.
+    - **Version**
+        A library that can parse _**[semver](https://semver.org/)**_ compatible strings and compare the priorities among them. 
+    - **ThrottledQueue**
+        A library that provides the throttled consumption mechanism for developers to solve the rancing conditions among the asynchronous operations.
+    - **Base32Hex**
+        The library that can generate and parse strings encoded as _**[base32hex](https://en.wikipedia.org/wiki/Base32#base32hex)**_ format
+    - **Base64**
+        The library that can generate and parse strings encoded as _**base64**_ or _**base64url**_ format
+    - **DOMEventEmitter**
+        Another event emitter that provides interface that is similar to _**[DOM Event](https://developer.mozilla.org/en-US/docs/Web/API/Event)**_ object
+    - **EventEmitter**
+        Another implementation of NodeJS styled _**[EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)**_
+    - **Timer**
+        The helper functions that help developers to deal with timers
