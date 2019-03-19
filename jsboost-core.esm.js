@@ -22,6 +22,11 @@ export * from "./lib/ext-object.esm.js";
 
 
 
+// DEPRECATED: The following exports will be removed in jsboost@2.0.0 or upper
+export {ThrottledTimer as SingletonInterval, ThrottledTimeout as SingletonTimeout, ThrottledTimer, ThrottledTimeout, Idle} from "./lib/ext-timer.esm.js";
+export {Encode as Base32Encode, Decode as Base32Decode} from "./lib/base32.esm.js";
+export {Encode as Base64Encode, URLEncode as Base64URLEncode, Decode as Base64Decode} from "./lib/base64.esm.js";
+
 export {
 	ANSIColor, Base32Hex, Base64, Timer
 };
