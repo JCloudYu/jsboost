@@ -53,3 +53,7 @@ node --experimental-modules --loader esm-js.loader.mjs [YOUR BOOT SCRIPT]
         Another implementation of NodeJS styled _**[EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)**_
     - **Timer**
         The helper functions that help developers to deal with timers
+    - **HttpCookie**
+        A helper that allows developers to generate and parse raw cookies
+        
+        

@@ -6,6 +6,7 @@ import * as ANSIColor from "./lib/ansi-vt100-colors.esm.js";
 import * as Base64 from "./lib/base64.esm.js";
 import * as Base32Hex from "./lib/base32.esm.js";
 import * as Timer from "./lib/ext-timer.esm.js";
+import * as Cookie from "./lib/http-cookies.esm.js";
 
 export * from "./lib/versioning.esm.js";
 export * from "./lib/throttled-queue.esm.js";
@@ -28,6 +29,6 @@ export {Encode as Base32Encode, Decode as Base32Decode} from "./lib/base32.esm.j
 export {Encode as Base64Encode, URLEncode as Base64URLEncode, Decode as Base64Decode} from "./lib/base64.esm.js";
 
 export {
-	ANSIColor, Base32Hex, Base64, Timer
+	ANSIColor, Base32Hex, Base64, Timer, Cookie
 };
 
