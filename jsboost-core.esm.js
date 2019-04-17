@@ -2,7 +2,7 @@
  *	Author: JCloudYu
  *	Create: 2018/12/22
 **/
-export const __IS_NODEJS_ENV = (typeof Buffer !== "undefined");
+export const ___IS_NODEJS = (typeof Buffer !== "undefined");
 
 import * as ANSIColor from "./lib/ansi-vt100-colors.esm.js";
 import * as Base64 from "./lib/base64.esm.js";

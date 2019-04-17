@@ -39,6 +39,8 @@ node --experimental-modules --loader esm-js.loader.mjs [YOUR BOOT SCRIPT]
 - **jsboost**
     - **\_\_\_IS\_WIN** _**( NodeJS only )**_
         This is a boolean value that indicates whether current _**NODEJS**_ instance is executing on Windows platform.
+    - **\_\_\_IS\_NODEJS**
+        This is a boolean value that indicates whether the module is running in _**NodeJS**_ environment.
     - **Version**
         A library that can parse _**[semver](https://semver.org/)**_ compatible strings and compare the priorities among them. 
     - **ThrottledQueue**
@@ -53,7 +55,7 @@ node --experimental-modules --loader esm-js.loader.mjs [YOUR BOOT SCRIPT]
         Another implementation of NodeJS styled _**[EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)**_
     - **Timer**
         The helper functions that help developers to deal with timers
-    - **HttpCookie**
+    - **Cookie**
         A helper that allows developers to generate and parse raw cookies
         
         
