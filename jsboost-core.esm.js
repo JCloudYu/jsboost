@@ -2,6 +2,8 @@
  *	Author: JCloudYu
  *	Create: 2018/12/22
 **/
+export const __IS_NODEJS_ENV = (typeof Buffer !== "undefined");
+
 import * as ANSIColor from "./lib/ansi-vt100-colors.esm.js";
 import * as Base64 from "./lib/base64.esm.js";
 import * as Base32Hex from "./lib/base32.esm.js";
@@ -12,6 +14,7 @@ export * from "./lib/versioning.esm.js";
 export * from "./lib/throttled-queue.esm.js";
 export * from "./lib/event-emitter.esm.js";
 export * from "./lib/dom-event-emitter.esm.js";
+export * from "./lib/utf8string.esm.js";
 
 
 
