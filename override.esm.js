@@ -7,6 +7,7 @@ import {
 	ObjectDefineProperties,
 	ObjectDefineProperty,
 	ObjectMerge,
+	ObjectGenerate,
 	PromiseWaitAll,
 	FlattenedPromise,
 	ThrottledTimeout,
@@ -20,6 +21,7 @@ Object.defineProperties = ObjectDefineProperties;
 Object.defineProperty = ObjectDefineProperty;
 Object.merge = ObjectMerge;
 Object.typeOf = TypeOf;
+Object.generate = ObjectGenerate;
 
 Promise.wait = PromiseWaitAll;
 Promise.flat = FlattenedPromise;
