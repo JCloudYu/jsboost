@@ -3,7 +3,7 @@
  *	Create: 2019/03/15
 **/
 import assert from "assert";
-import {Version} from "../jsboost.mjs";
+import {Version} from "../version.esm.js";
 
 
 test_group( "semver functionality test", ()=>{

@@ -1,6 +1,8 @@
 /**
- *    Author: JCloudYu
- *    Create: 2018/12/22
+ *	Author: JCloudYu
+ *	Create: 2018/12/22
+ *
+ *	The ANSI-VT100 Terminal Color Codes
 **/
 const DEFAULT_COLOR_SET = [
 	[ 0,  0, "reset"],

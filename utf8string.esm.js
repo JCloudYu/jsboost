@@ -2,10 +2,7 @@
  *	Author: JCloudYu
  *	Create: 2019/04/17
 **/
-import {___IS_NODEJS} from "../jsboost-core.esm.js";
-
-
-
+const ___IS_NODEJS = (typeof Buffer !== "undefined");
 const EMPTY_BUFFER	= new ArrayBuffer(0);
 const EMPTY_BYTES	= new Uint8Array(EMPTY_BUFFER);
 

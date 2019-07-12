@@ -2,65 +2,6 @@
  *	Author: JCloudYu
  *	Create: 2019/05/04
 **/
-// region [ Object extension ]
-const _ObjectDefineProperty = Object.defineProperty;
-const _ObjectDefineProperties = Object.defineProperties;
-
-export function ObjectDefineProperty(object, prop_name, prop_attr) {
-	_ObjectDefineProperty(object, prop_name, prop_attr);
-	return object;
-}
-export function ObjectDefineProperties(object, prop_contents) {
-	_ObjectDefineProperties(object, prop_contents);
-	return object;
-}
-export function ObjectMerge(target, source) {
-	if ( Object(target) !== target ) {
-		throw new Error("Given target is not an object");
-	}
-	
-	if ( Object(source) !== source ) {
-		throw new Error("Given source is not an object");
-	}
-	
-	
-	for (const key in source) {
-		if ( (source.hasOwnProperty && !source.hasOwnProperty(key)) ||
-			 (source[key] === undefined)
-		) { continue; }
-	
-		
-		
-		const tValue = target[key];
-		const sValue = source[key];
-		const tType	 = TypeOf(tValue);
-		const sType	 = TypeOf(sValue);
-		
-		if ( tType !== "object" || sType !== "object" ) {
-			if ( target instanceof Map ) {
-				target.set(key, sValue);
-			}
-			else {
-				target[key] = sValue;
-			}
-			continue;
-		}
-		
-		ObjectMerge(tValue, sValue);
-	}
-	
-	return target;
-}
-export function ObjectGenerate(prototype=null, props={}) {
-	const object = Object.create(prototype);
-	if ( Object(props) === props ) {
-		Object.assign(object, props);
-	}
-	return object;
-}
-// endregion
-
-// region [ Promise Extension ]
 export function PromiseWaitAll(promise_queue=[]) {
 	if ( !Array.isArray(promise_queue) ){
 		promise_queue = [promise_queue];
@@ -103,9 +44,6 @@ export function FlattenedPromise() {
 	});
 	return compact;
 }
-// endregion
-
-// region [ Timer Extension ]
 export function ThrottledTimeout() {
 	let _scheduled	= null;
 	let _executing	= false;
@@ -160,33 +98,6 @@ export function ThrottledTimeout() {
 		_scheduled = null;
 	}
 }
-export function ThrottledTimer() {
-	const _timeout = ThrottledTimeout();
-	const timeout_cb = (cb, interval=0, ...args)=>{
-		const ___DO_TIMEOUT=async()=>{
-				_timeout(___DO_TIMEOUT, interval);
-				
-				try {
-					await cb(...args);
-				}
-				catch(e) {
-					_timeout.clear();
-					throw e;
-				}
-			};
-		_timeout(___DO_TIMEOUT, interval, ...args);
-	};
-	timeout_cb.clear=()=>{
-		_timeout.clear();
-	};
-	return timeout_cb;
-}
-export function Idle(duration=0) {
-	return new Promise((resolve)=>{setTimeout(resolve, duration)});
-}
-// endregion
-
-// region [ Misc ]
 export function TypeOf(input, resolveObj=false) {
 	const type = typeof input;
 	switch(type) {
@@ -296,4 +207,3 @@ export function TypeOf(input, resolveObj=false) {
 	
 	return "object";
 }
-// endregion

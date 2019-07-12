@@ -4,7 +4,7 @@
 **/
 import assert from "assert";
 
-import {UTF8String} from "../jsboost.mjs";
+import {UTF8String} from "../utf8string.esm.js";
 
 
 

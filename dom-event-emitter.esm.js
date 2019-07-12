@@ -2,10 +2,6 @@
  * Author: JCloudYu
  * Create: 2018/09/20
 **/
-import {ObjectDefineProperties} from "./native-extension.esm.js";
-
-
-
 const WEAK_RELATION_MAP = new WeakMap();
 export class DOMEventEmitter {
 	constructor() {
@@ -302,7 +298,7 @@ function __PREPARE_EVENT(eventInfo) {
 	
 	
 	let _KEEP_PROPAGATING = true;
-	return ObjectDefineProperties(_info, {
+	Object.defineProperties(_info, {
 		type:{value:`${_event}`, enumerable:true},
 		timestamp:{value:Date.now(), enumerable:true},
 		propagation:{
@@ -311,5 +307,6 @@ function __PREPARE_EVENT(eventInfo) {
 			enumerable:true
 		}
 	});
+	return _info;
 }
 // endregion

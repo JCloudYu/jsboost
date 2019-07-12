@@ -11,6 +11,3 @@ export function RSID(length=25, prefix='') {
 	}
 	return `${prefix}${id}`;
 }
-
-
-export {RSID as RandomStringID};

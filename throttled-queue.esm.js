@@ -2,7 +2,7 @@
 *	Author: JCloudYu
 *	Create: 2018/12/08
 **/
-import {FlattenedPromise as PassivePromise, ThrottledTimeout} from "./native-extension.esm.js";
+import {FlattenedPromise as PassivePromise, ThrottledTimeout} from "./_helper.esm.js";
 
 
 

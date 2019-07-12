@@ -2,7 +2,7 @@
  *	Author: JCloudYu
  *	Create: 2019/01/06
 **/
-import {PromiseWaitAll as WaitAll, TypeOf} from "../native-extension.esm.js";
+import {PromiseWaitAll as WaitAll, TypeOf} from "../_helper.esm.js";
 import {RSID} from "./random-string-id.esm.js";
 import {ModuleImport} from "./load-module.esm.js"
 

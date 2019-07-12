@@ -3,8 +3,7 @@
  *	Create: 2019/03/22
 **/
 import assert from "assert";
-import {Cookie} from "../jsboost.mjs"
-const {HTTPCookies} = Cookie;
+import {HTTPCookies} from "../http-cookies.esm.js";
 
 
 
