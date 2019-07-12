@@ -11,7 +11,7 @@ const __REV_MAP	 = (()=>{ const MAP = {}; __CHAR_MAP.forEach((key, val)=>{ MAP[k
  * @param {String} [map=null]
  * @return {String}
 **/
-export function Base32HexEncode(input, map=null) {
+export function Base32Encode(input, map=null) {
 	if (!(input instanceof ArrayBuffer)) {
 		throw new Error( "Given data must be an array buffer!" );
 	}
@@ -84,7 +84,7 @@ export function Base32HexEncode(input, map=null) {
  * @param {String} [map=null]
  * @return {ArrayBuffer}
 **/
-export function Base32HexDecode(inputBase32, map=null) {
+export function Base32Decode(inputBase32, map=null) {
 	if ( !__FORMAT_CHECK.test(inputBase32) ) {
 		return null;
 	}

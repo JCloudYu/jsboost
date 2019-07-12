@@ -3,19 +3,19 @@
  *	Create: 2019/01/06
 **/
 import {PromiseWaitAll as WaitAll, TypeOf} from "../_helper.esm.js";
-import {RSID} from "./random-string-id.esm.js";
+import {RandomString} from "./random-string.esm.js";
 import {ModuleImport} from "./load-module.esm.js"
 
 
 
-export async function LoadResources(...args) {
+export async function LoadResource(...args) {
 	if ( Array.isArray(args[0]) ) { args = args[0]; }
 	
 	
 	
 	const _promises = [];
 	for(const resource of args) {
-		const TAG_ID = RSID(25, '_');
+		const TAG_ID = RandomString(25, '_');
 		let injectBody = true;
 		
 		let type, path, important, shadow, reference;
@@ -177,7 +177,7 @@ export async function BatchResources(...args) {
 		
 		if ( RESOURCE_BATCH.length > 0 ) {
 			_previous_exec_result = null;
-			const results = await LoadResources(RESOURCE_BATCH);
+			const results = await LoadResource(RESOURCE_BATCH);
 			for( let result of results ) {
 				BATCH_RESULTS.push(result);
 			}
@@ -197,7 +197,7 @@ export async function BatchResources(...args) {
 	if ( RESOURCE_BATCH.length > 0 ) {
 		_previous_exec_result = null;
 		try {
-			const results = await LoadResources(RESOURCE_BATCH);
+			const results = await LoadResource(RESOURCE_BATCH);
 			for( let result of results ) {
 				BATCH_RESULTS.push(result);
 			}
