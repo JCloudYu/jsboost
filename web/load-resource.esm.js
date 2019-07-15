@@ -4,7 +4,7 @@
 **/
 import {PromiseWaitAll as WaitAll, TypeOf} from "../_helper.esm.js";
 import {RandomString} from "./random-string.esm.js";
-import {ModuleImport} from "./load-module.esm.js"
+import {ModuleImport} from "./module-import.esm.js"
 
 
 
