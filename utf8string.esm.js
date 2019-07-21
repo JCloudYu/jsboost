@@ -2,6 +2,10 @@
  *	Author: JCloudYu
  *	Create: 2019/04/17
 **/
+import {ExtractArrayBuffer} from "./_helper.esm.js";
+
+
+
 const ___IS_NODEJS = (typeof Buffer !== "undefined");
 const EMPTY_BUFFER	= new ArrayBuffer(0);
 const EMPTY_BYTES	= new Uint8Array(EMPTY_BUFFER);
@@ -79,6 +83,10 @@ export class UTF8String {
 	 * @returns {Uint8Array}
 	**/
 	static Encode(str) {
+		if ( typeof str !== "string" ) {
+			throw new TypeError( "Given input argument must be a js string!" );
+		}
+	
 		let codePoints = [];
 		for( let i = 0; i < str.length; i++ ) {
 			let codePoint = str.codePointAt(i);
@@ -124,9 +132,7 @@ export class UTF8String {
 	 * @returns {string}
 	**/
 	static Decode(raw_bytes) {
-		if ( !(raw_bytes instanceof Uint8Array) ) {
-			throw new TypeError( "Given input must be an Uint8Array contains UTF8 encoded value!" );
-		}
+		raw_bytes = new Uint8Array(ExtractArrayBuffer(raw_bytes));
 	
 		let uint8 = raw_bytes;
 		let codePoints = [];
