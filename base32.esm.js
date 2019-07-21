@@ -1,3 +1,7 @@
+import {ExtractArrayBuffer} from "_helper.esm.js";
+
+
+
 /**
  *	Author: JCloudYu
  *	Create: 2018/12/22
@@ -12,9 +16,7 @@ const __REV_MAP	 = (()=>{ const MAP = {}; __CHAR_MAP.forEach((key, val)=>{ MAP[k
  * @return {String}
 **/
 export function Base32Encode(input, map=null) {
-	if (!(input instanceof ArrayBuffer)) {
-		throw new Error( "Given data must be an array buffer!" );
-	}
+	input = ExtractArrayBuffer(input);
 	
 	
 	let inputData = new Uint8Array(input);

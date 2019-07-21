@@ -2,6 +2,10 @@
  *	Author: JCloudYu
  *	Create: 2018/12/22
 **/
+import {ExtractArrayBuffer} from "./_helper.esm.js";
+
+
+
 const BASE64_ENCODE_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
 const BASE64URL_ENCODE_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'.split('');
 const BASE64_DECODE_CHAR = {
@@ -24,9 +28,7 @@ const BASE64_FORMAT_CHECK = /^([0-9a-zA-Z+-/_]+)={0,2}$/;
  * @return {string}
 **/
 export function Base64Encode(input) {
-	if (!(input instanceof ArrayBuffer)) {
-		throw new Error( "Given data must be an array buffer!" );
-	}
+	input = ExtractArrayBuffer(input);
 	
 	let bytes = new Uint8Array(input);
 	var v1, v2, v3, base64Str = '', length = bytes.length;
@@ -65,9 +67,8 @@ export function Base64Encode(input) {
  * @return {String}
 **/
 export function Base64URLEncode(input) {
-	if (!(input instanceof ArrayBuffer)) {
-		throw new Error( "Given data must be an array buffer!" );
-	}
+	input = ExtractArrayBuffer(input);
+	
 
 	let bytes = new Uint8Array(input);
 
