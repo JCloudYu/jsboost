@@ -410,3 +410,19 @@ export function CastArrayBufferToString(input, format=16, padding=false) {
 	
 	return padding ? result : result.replace(/^0+/, '');
 }
+export function ObjectAssignProperties(object, props, attr={configurable:false, enumerable:false, writable:false}) {
+	for( const prop in props ) {
+		if ( (props.hasOwnProperty && !props.hasOwnProperty(prop)) ||
+			 (props[prop] === undefined)
+		) { continue; }
+		
+		Object.defineProperties(object, prop, {
+			value:props[prop],
+			configurable:!!attr.configurable,
+			enumerable:!!attr.enumerable,
+			writable:!!attr.writable
+		});
+	}
+	
+	return object;
+}
