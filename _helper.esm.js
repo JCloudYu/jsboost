@@ -416,7 +416,7 @@ export function ObjectAssignProperties(object, props, attr={configurable:false, 
 			 (props[prop] === undefined)
 		) { continue; }
 		
-		Object.defineProperties(object, prop, {
+		Object.defineProperty(object, prop, {
 			value:props[prop],
 			configurable:!!attr.configurable,
 			enumerable:!!attr.enumerable,
