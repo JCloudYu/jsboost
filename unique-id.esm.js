@@ -3,6 +3,8 @@
  *	Create: 2019/07/19
 **/
 import {BuildArrayBuffer, CastArrayBufferToString, ExtractArrayBuffer} from "./_helper.esm.js";
+import {Base64Encode, Base64URLEncode, Base64Decode} from "./base64.esm.js";
+import {Base32Encode, Base32Decode} from "./base32.esm.js";
 
 // See http://www.isthe.com/chongo/tech/comp/fnv/#FNV-param for the definition of these parameters;
 const FNV_PRIME_HIGH = 0x0100, FNV_PRIME_LOW = 0x0193;	// 16777619 0x01000193
@@ -39,13 +41,29 @@ let MACHINE_ID = fnv1a32((()=>{
 
 let SEQ_NUMBER = (Math.random() * Number.MAX_SAFE_INTEGER)|0;
 export class UniqueId {
-	constructor(id=null) {
+	constructor(id=null, format='hex') {
 		if ( typeof id === "string" ) {
-			if ( id.length !== 40 ) {
-				throw new RangeError( "Given id string must be a 24bytes data encoded with hex representation!" );
+			switch(format) {
+				case "base64":
+				case "base64url":
+					id = Base64Decode(id);
+					break;
+				
+				case "base32":
+					id = Base32Decode(id);
+					break;
+					
+				case "bits":
+				case 2:
+					id = BuildArrayBuffer( id, "bits" );
+					break;
+				
+				case "hex":
+				case 16:
+				default:
+					id = BuildArrayBuffer( id, "hex" );
+					break;
 			}
-			
-			id = BuildArrayBuffer( id, "hex" );
 		}
 		else
 		if ( id instanceof ArrayBuffer ) {
@@ -83,8 +101,30 @@ export class UniqueId {
 		
 		Object.defineProperty(this, 'bytes', {value:new Uint8Array(id), enumerable:true});
 	}
-	toString() {
-		return CastArrayBufferToString(this.bytes.buffer, 16, true);
+	toString(format=16) {
+		switch(format) {
+			case "base64":
+				return Base64Encode(this.bytes);
+			
+			case "base64url":
+				return Base64URLEncode(this.bytes);
+			
+			case "base32":
+				return Base32Encode(this.bytes);
+			
+			case "hex":
+				format=16;
+				break;
+				
+			case "bits":
+				format=2;
+				break;
+			
+			default:
+				break;
+		}
+		
+		return CastArrayBufferToString(this.bytes.buffer, format, true);
 	}
 	compare(other) {
 		if ( other instanceof UniqueId ) {
@@ -110,7 +150,7 @@ export class UniqueId {
 		return 0;
 	}
 	toJSON() {
-		return this.toString();
+		return this.toString( 'hex' );
 	}
 	static from(input=null) {
 		try { return new UniqueId(input); } catch(e) { return null; }
