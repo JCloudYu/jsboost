@@ -6,7 +6,7 @@ import {BuildArrayBuffer, CastArrayBufferToString, ExtractArrayBuffer} from "./_
 
 // See http://www.isthe.com/chongo/tech/comp/fnv/#FNV-param for the definition of these parameters;
 const FNV_PRIME_HIGH = 0x0100, FNV_PRIME_LOW = 0x0193;	// 16777619 0x01000193
-const OFFSET_BASIS = Buffer.from([0xC5, 0x9D, 0x1C, 0x81]);	// 2166136261 [0x81, 0x1C, 0x9D, 0xC5]
+const OFFSET_BASIS = BuildArrayBuffer([0xC5, 0x9D, 0x1C, 0x81]);	// 2166136261 [0x81, 0x1C, 0x9D, 0xC5]
 const HOSTNAME_CANDIDATES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ_-";
 
 export function fnv1a32(input){
@@ -22,7 +22,7 @@ export function fnv1a32(input){
 		RESULT_PROC[0] = hash_low * FNV_PRIME_LOW;
 		RESULT_PROC[1] = hash_low * FNV_PRIME_HIGH + hash_high * FNV_PRIME_LOW + (RESULT_PROC[0]>>>16);
 	}
-	return BuildArrayBuffer(HASH_RESULT[0]);
+	return HASH_RESULT.buffer;
 }
 
 
@@ -41,7 +41,7 @@ let SEQ_NUMBER = (Math.random() * Number.MAX_SAFE_INTEGER)|0;
 export class UniqueId {
 	constructor(id=null) {
 		if ( typeof id === "string" ) {
-			if ( id.length !== 48 ) {
+			if ( id.length !== 40 ) {
 				throw new RangeError( "Given id string must be a 24bytes data encoded with hex representation!" );
 			}
 			
@@ -60,22 +60,24 @@ export class UniqueId {
 			id = id.buffer;
 		}
 		else {
-			const time	= BuildArrayBuffer(Date.now(), 'uint64');
-			const pid	= BuildArrayBuffer(PID, 'uint16');
-			const ppid	= BuildArrayBuffer(PPID, 'uint16');
-			const inc	= BuildArrayBuffer((SEQ_NUMBER=(SEQ_NUMBER+1) % 0xffffff), 'uint32');
-			const buff	= new Uint8Array(24);
+			const time	= Date.now();
+			const time_upper = Math.floor(time/0xFFFFFFFF);
+			const time_lower = time%0xFFFFFFFF;
+			const inc	= (SEQ_NUMBER=(SEQ_NUMBER+1) % 0xffffff);
+			const buff	= new Uint8Array(20);
+			const view	= new DataView(buff.buffer);
 			
-			buff.set(new Uint8Array(time),		 0);	// [0-7] epoch time
+			view.setUint32(0, time_upper, false);		// [0-3] epoch time upper
+			view.setUint32(4, time_lower, false);		// [4-7] epoch time lower
 			buff.set(new Uint8Array(MACHINE_ID), 8);	// [8-11] machine id
-			buff.set(new Uint8Array(ppid),		 12);	// [12-15] ppid
-			buff.set(new Uint8Array(pid),		 16);	// [16-19] pid
-			buff.set(new Uint8Array(inc),		 20);	// [20-23] seq
+			view.setUint16(12, PPID, false);			// [12-13] ppid
+			view.setUint16(14, PID,  false);			// [14-15] pid
+			view.setUint32(16, inc,	 false);			// [16-19] seq
 			
 			id = buff.buffer;
 		}
 		
-		if ( !(id instanceof ArrayBuffer) || id.byteLength !== 24 ) {
+		if ( !(id instanceof ArrayBuffer) || id.byteLength !== 20 ) {
 			throw new TypeError( "Given input argument is invalid! Only ArrayBuffer, hex string or Uint8Array are accepted!" );
 		}
 		
@@ -91,8 +93,11 @@ export class UniqueId {
 		
 		const self = this.bytes;
 		other = new Uint8Array(ExtractArrayBuffer(other));
-		if ( other.length !== 24 ) { return 1; }
-		for  ( let i=0; i<24; i++ ) {
+		if ( other.length !== 20 ) {
+			throw new RangeError( "Given target is not a valid unique id!" );
+		}
+		
+		for  ( let i=0; i<20; i++ ) {
 			if ( self[i] < other[i] ) {
 				return -1;
 			}
