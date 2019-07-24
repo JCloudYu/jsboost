@@ -1,4 +1,4 @@
-import {ExtractArrayBuffer} from "_helper.esm.js";
+import {ExtractArrayBuffer} from "./_helper.esm.js";
 
 
 
@@ -121,7 +121,7 @@ export function Base32Decode(inputBase32, map=null) {
 						   CVT_MAP[inputBase32[begin+7]];
 	}
 	
-	if ( remain === 0 ) { return decoded; }
+	if ( remain === 0 ) { return decoded.buffer; }
 	
 	
 	
