@@ -34,6 +34,7 @@ export function WebFetch(url, init={}) {
 	} = init;
 	const request = new XMLHttpRequest();
 	promise.request = request;
+	promise.promise = promise;
 	
 	
 	
