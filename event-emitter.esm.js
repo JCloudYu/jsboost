@@ -18,7 +18,7 @@ export class EventEmitter {
 	 * @param {function} listener The listener
 	 * @returns {EventEmitter} Return the emitter instance for chaining
 	**/
-	addListener(eventName, listener) {
+	addEventListener(eventName, listener) {
 		if ( typeof listener !== "function" ) {
 			throw new TypeError( "Given listener should be a function" );
 		}
@@ -34,6 +34,17 @@ export class EventEmitter {
 	/**
 	 * Add a listener to a specific event
 	 *
+	 * @param {string} eventName The event the listener will listen to
+	 * @param {function} listener The listener
+	 * @returns {EventEmitter} Return the emitter instance for chaining
+	**/
+	addListener(eventName, listener) {
+		return this.addEventListener(eventName, listener);
+	}
+	
+	/**
+	 * Add a listener to a specific event
+	 *
 	 * @param {string} events A comma separated event name list the listener will listen on
 	 * @param {function} listener The listener to be added
 	 * @returns {EventEmitter} Return the emitter instance for chaining
@@ -43,7 +54,7 @@ export class EventEmitter {
 		if ( eventNames.length > 0 ) {
 			eventNames = eventNames.split( ',' );
 			for( let eventName of eventNames ) {
-				this.addListener(eventName.trim(), listener);
+				this.addEventListener(eventName.trim(), listener);
 			}
 		}
 		
@@ -76,7 +87,7 @@ export class EventEmitter {
 	 * @param {function} listener The target listener to be removed
 	 * @returns {EventEmitter} Return the emitter instance for chaining
 	**/
-	removeListener(eventName, listener) {
+	removeEventListener(eventName, listener) {
 		const {_event_queue} = WEAK_RELATION_MAP.get(this);
 		const name = eventName.toString();
 		const queue = _event_queue[name];
@@ -88,6 +99,17 @@ export class EventEmitter {
 		}
 		
 		return this;
+	}
+	
+	/**
+	 * Remove a listener from a specific event
+	 *
+	 * @param {string} eventName The event where the listener locates
+	 * @param {function} listener The target listener to be removed
+	 * @returns {EventEmitter} Return the emitter instance for chaining
+	**/
+	removeListener(eventName, listener) {
+		return this.removeEventListener(eventName, listener);
 	}
 	
 	/**
@@ -127,7 +149,7 @@ export class EventEmitter {
 		}
 	
 		for( let eventName of eventNames ) {
-			this.removeListener(eventName.trim(), listener);
+			this.removeEventListener(eventName.trim(), listener);
 		}
 		return this;
 	}
