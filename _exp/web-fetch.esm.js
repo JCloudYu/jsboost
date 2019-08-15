@@ -195,7 +195,7 @@ async function BrowserFetch(url, init={}) {
 	
 	
 	
-	request.open( method, url, false );
+	request.open( method, url, true );
 	request.send( body );
 	return promise;
 }
