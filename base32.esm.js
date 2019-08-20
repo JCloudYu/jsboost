@@ -6,9 +6,23 @@ import {ExtractArrayBuffer} from "./_helper.esm.js";
  *	Author: JCloudYu
  *	Create: 2018/12/22
 **/
-const __FORMAT_CHECK = /^[0123456789ABCDEFGHIJKLMNOPQRSTUV]+$/;
-const __CHAR_MAP = '0123456789ABCDEFGHIJKLMNOPQRSTUV'.split('');
-const __REV_MAP	 = (()=>{ const MAP = {}; __CHAR_MAP.forEach((key, val)=>{ MAP[key] = val; }); return MAP; })();
+const __FORMAT_CHECK = /^[0123456789abcdefghijklmnopqrstuvABCDEFGHIJKLMNOPQRSTUV]+$/;
+const __CHAR_MAP = "0123456789abcdefghijklmnopqrstuv".split('');
+const __REV_MAP = {
+	'0': 0, '1': 1, '2': 2, '3': 3, '4': 4,
+	'5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+	'A':10, 'B':11, 'C':12, 'D':13, 'E':14,
+	'F':15, 'G':16, 'H':17, 'I':18, 'J':19,
+	'K':20, 'L':21, 'M':22, 'N':23, 'O':24,
+	'P':25, 'Q':26, 'R':27, 'S':28, 'T':29,
+	'U':30, 'V':31,
+	
+	'a':10, 'b':11, 'c':12, 'd':13, 'e':14,
+	'f':15, 'g':16, 'h':17, 'i':18, 'j':19,
+	'k':20, 'l':21, 'm':22, 'n':23, 'o':24,
+	'p':25, 'q':26, 'r':27, 's':28, 't':29,
+	'u':30, 'v':31
+};
 
 /**
  * @param {ArrayBuffer} input

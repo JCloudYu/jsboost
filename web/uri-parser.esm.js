@@ -13,8 +13,14 @@
  *		          {         authority           }  {                  path-descriptor                   }
 **/
 
+/**
+ *	Parse the input string as a url formatted string
+ *
+ *	@param {String} url The raw input url formatted string
+ *	@returns {{path:String, query:String, fragment:String}}
+**/
 export function ParseURLPathDescriptor(url) {
-	url = url.trim();
+	url = (url||'').trim();
 
 	// NOTE: Parse hash
 	let query, frag, pos = url.indexOf( '#' );
@@ -38,8 +44,15 @@ export function ParseURLPathDescriptor(url) {
 	
 	return {path:url, query, fragment:frag};
 }
+
+/**
+ *	Parse the input string as a url path string and populate the left most component out
+ *
+ *	@param {String} path The input raw string to be parsed
+ *	@return String[]
+**/
 export function PopURLPath(path) {
-	path = path.trim();
+	path = (path||'').trim();
 
 	if ( path === "" ) return [ "", "" ];
 	
@@ -50,20 +63,34 @@ export function PopURLPath(path) {
 	
 	return [ path.substring(0, pos), path.substring(pos) ];
 }
-export function ShiftURLPath(url) {
-	url = url.trim();
+
+/**
+ *	Parse the input string as a url path string and populate the right most component out
+ *
+ *	@param {String} path The input raw string to be parsed
+ *	@return String[]
+**/
+export function ShiftURLPath(path) {
+	path = (path||'').trim();
 	
-	if ( url === "" ) return [ "", "" ];
+	if ( path === "" ) return [ "", "" ];
 	
-	let pos = url.lastIndexOf('/');
+	let pos = path.lastIndexOf('/');
 	if ( pos <= 0 ) {
-		return [ "", url ];
+		return [ "", path ];
 	}
 	
-	return [ url.substring(0, pos), url.substring(pos) ];
+	return [ path.substring(0, pos), path.substring(pos) ];
 }
+
+/**
+ *	Parse the input string as a urlencoded string
+ *
+ *	@param {String} raw_query The input raw string to be parsed
+ *	@return {Object};
+**/
 export function ParseURLQuery(raw_query) {
-	raw_query = raw_query.trim();
+	raw_query = (raw_query||'').trim();
 	if ( raw_query[0] === '?' ) {
 		raw_query = raw_query.substring(1);
 	}
