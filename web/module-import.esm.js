@@ -2,7 +2,7 @@
  *	Author: JCloudYu
  *	Create: 2019/02/17
 **/
-import {RandomString} from "./random-string.esm.js";
+import {UniqueId} from "unique-id.esm.js";
 
 
 
@@ -36,7 +36,7 @@ export function ModuleImport(module_url, options={ref_path:null, cross_origin:fa
 		const ref_path = _ref_path;
 		const abs_url = ref_path ? RESOLVE_PARENT_PATH(module_url, ref_path) : TO_ABSOLUTE_URL(module_url);
 		const abs_dir = abs_url.substring(0, abs_url.lastIndexOf('/'));
-		const inject_point = RandomString(10, '_');
+		const inject_point = '_' + (new UniqueId()).toString('base64url');
 		const element = document.createElement( 'script' );
 		const destruct=()=>{
 			delete window[inject_point];

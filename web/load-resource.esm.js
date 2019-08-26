@@ -3,10 +3,20 @@
  *	Create: 2019/01/06
 **/
 import {PromiseWaitAll as WaitAll, TypeOf} from "../_helper.esm.js";
-import {RandomString} from "./random-string.esm.js";
-import {ModuleImport} from "./module-import.esm.js"
+import {UniqueId} from "../unique-id.esm.js";
+import {ModuleImport} from "./module-import.esm.js";
 
 
+
+const RES_TYPE = {
+	CSS: 1,
+	HTML: 2,
+	HTML_TEMPLATE:3,
+	JS: 4,
+	SHADOWED_JS: 5,
+	ES_MODULE: 6,
+	IMAGE: 7
+};
 
 export async function LoadResource(...args) {
 	if ( Array.isArray(args[0]) ) { args = args[0]; }
@@ -15,7 +25,7 @@ export async function LoadResource(...args) {
 	
 	const _promises = [];
 	for(const resource of args) {
-		const TAG_ID = RandomString(25, '_');
+		const RES_ID = '_' + (new UniqueId()).toString('base64url');
 		let injectBody = true;
 		
 		let type, path, important, shadow, reference;
@@ -41,12 +51,14 @@ export async function LoadResource(...args) {
 					element.type = "text/css";
 					element.href = path;
 					
-					element.onload  = ()=>{resolve();};
+					element.onload  = ()=>resolve({type:RES_TYPE.CSS, result:element});
 					element.onerror = reject;
 					break;
 				}
 				case "module": {
-					ModuleImport(path, reference).then(resolve).catch(reject);
+					ModuleImport(path, reference)
+					.then((imported)=>resolve({type:RES_TYPE.ES_MODULE, result:imported}))
+					.catch(reject);
 					break;
 				}
 				case "js": {
@@ -55,7 +67,7 @@ export async function LoadResource(...args) {
 						element.type = "application/javascript";
 						element.src = path;
 						
-						element.onload = ()=>{resolve();};
+						element.onload = ()=>resolve({type:RES_TYPE.JS, result:element});
 						element.onerror = reject;
 					}
 					else {
@@ -75,7 +87,7 @@ export async function LoadResource(...args) {
 								arg_names.push(ctnt);
 								
 								const func = new Function(...arg_names);
-								resolve(func(...invoke_args));
+								resolve({type:RES_TYPE.SHADOWED_JS, result:func(...invoke_args)});
 							});
 						}, reject);
 					}
@@ -98,10 +110,11 @@ export async function LoadResource(...args) {
 
 								const func = new Function(...arg_names);
 								resolve(func);
+								resolve({type:RES_TYPE.HTML_TEMPLATE, result:func})
 							}
 							else {
 								element.innerHTML = ctnt;
-								resolve();
+								resolve({type:RES_TYPE.HTML, result:element});
 							}
 						});
 					}, reject);
@@ -112,7 +125,7 @@ export async function LoadResource(...args) {
 					element.src = path;
 					element.style.display='none';
 					
-					element.onload	= ()=>{resolve();};
+					element.onload	= ()=>resolve({type:RES_TYPE.IMAGE, result:element});
 					element.onerror = reject;
 					break;
 				}
@@ -123,7 +136,7 @@ export async function LoadResource(...args) {
 			
 			if ( element ) {
 				element.setAttribute( 'data-important', important ? "1" : "0" );
-				element.id = TAG_ID;
+				element.id = RES_ID;
 				document.querySelector(injectBody ? 'body' : 'head').appendChild(element);
 			}
 		});
@@ -132,7 +145,35 @@ export async function LoadResource(...args) {
 	
 		// region [ Register promise ]
 		_promises.push(R_PROMISE.then(
-			(result)=>{ return {loaded:true, result:result||TAG_ID} },
+			({type:res_type, result})=>{
+				const ret_val = {
+					loaded:true,
+					id:RES_ID,
+					result:result||RES_ID
+				};
+			
+				switch(res_type) {
+					case RES_TYPE.HTML:
+					case RES_TYPE.JS:
+					case RES_TYPE.IMAGE:
+					case RES_TYPE.CSS:
+						ret_val.element = result;
+						break;
+					
+					case RES_TYPE.SHADOWED_JS:
+						break;
+					
+					case RES_TYPE.ES_MODULE:
+						ret_val.exports = result;
+						break;
+					
+					case RES_TYPE.HTML_TEMPLATE:
+						ret_val.tmpl = result;
+						break;
+				}
+				
+				return ret_val;
+			},
 			(e)=>{
 				const result = {loaded:false, result:e};
 				return (important) ? Promise.reject(result) : result;
