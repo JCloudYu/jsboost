@@ -2,7 +2,7 @@
  *	Author: JCloudYu
  *	Create: 2019/02/17
 **/
-import {UniqueId} from "unique-id.esm.js";
+import {UniqueId} from "../unique-id.esm.js";
 
 
 

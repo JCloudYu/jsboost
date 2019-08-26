@@ -3,7 +3,7 @@
  *	Create: 2019/07/19
 **/
 import {BuildArrayBuffer, CastArrayBufferToString, ExtractArrayBuffer} from "./_helper.esm.js";
-import {Base64Encode, Base64URLEncode, Base64Decode} from "./base64.esm.js";
+import {Base64Encode, Base64URLEncode, Base64Decode, Base64SortEncode, Base64SortDecode} from "./base64.esm.js";
 import {Base32Encode, Base32Decode} from "./base32.esm.js";
 
 // See http://www.isthe.com/chongo/tech/comp/fnv/#FNV-param for the definition of these parameters;
@@ -47,6 +47,10 @@ export class UniqueId {
 				case "base64":
 				case "base64url":
 					id = Base64Decode(id);
+					break;
+					
+				case "base64sort":
+					id = Base64SortDecode(id);
 					break;
 				
 				case "base32":
@@ -108,6 +112,9 @@ export class UniqueId {
 			
 			case "base64url":
 				return Base64URLEncode(this.bytes);
+				
+			case "base64sort":
+				return Base64SortEncode(this.bytes);
 			
 			case "base32":
 				return Base32Encode(this.bytes);
