@@ -25,7 +25,7 @@ export async function LoadResource(...args) {
 	
 	const _promises = [];
 	for(const resource of args) {
-		const RES_ID = '_' + (new UniqueId()).toString('base64url');
+		const RES_ID = '_' + (new UniqueId()).toString('base32');
 		let injectBody = true;
 		
 		let type, path, important, shadow, reference;
