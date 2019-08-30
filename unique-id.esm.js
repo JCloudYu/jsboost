@@ -48,10 +48,6 @@ export class UniqueId {
 				case "base64url":
 					id = Base64Decode(id);
 					break;
-					
-				case "base64sort":
-					id = Base64SortDecode(id);
-					break;
 				
 				case "base32":
 					id = Base32Decode(id);
@@ -105,30 +101,32 @@ export class UniqueId {
 		
 		Object.defineProperty(this, 'bytes', {value:new Uint8Array(id), enumerable:true});
 	}
-	toString(format=16) {
+	toString(format=64) {
 		switch(format) {
 			case "base64":
 				return Base64Encode(this.bytes);
 			
 			case "base64url":
 				return Base64URLEncode(this.bytes);
-				
-			case "base64sort":
-				return Base64SortEncode(this.bytes);
 			
+			case 32:
 			case "base32":
 				return Base32Encode(this.bytes);
 			
+			case 16:
 			case "hex":
 				format=16;
 				break;
 				
+			case 2:
 			case "bits":
 				format=2;
 				break;
 			
+			case 64:
+			case "base64sort":
 			default:
-				break;
+				return Base64SortEncode(this.bytes);
 		}
 		
 		return CastArrayBufferToString(this.bytes.buffer, format, true);
