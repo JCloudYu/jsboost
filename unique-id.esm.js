@@ -155,7 +155,7 @@ export class UniqueId {
 		return 0;
 	}
 	toJSON() {
-		return this.toString( 'hex' );
+		return this.toString();
 	}
 	toBytes() { return this.bytes.slice(0); }
 	static from(input=null) {
