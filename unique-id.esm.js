@@ -39,7 +39,7 @@ let MACHINE_ID = fnv1a32((()=>{
 	return str;
 })());
 
-let SEQ_NUMBER = (Math.random() * Number.MAX_SAFE_INTEGER)|0;
+let SEQ_NUMBER = Math.floor(Math.random() * 0xFFFFFFFF);
 export class UniqueId {
 	constructor(id=null, format='hex') {
 		if ( typeof id === "string" ) {
@@ -81,7 +81,7 @@ export class UniqueId {
 			const time	= Date.now();
 			const time_upper = Math.floor(time/0xFFFFFFFF);
 			const time_lower = time%0xFFFFFFFF;
-			const inc	= (SEQ_NUMBER=(SEQ_NUMBER+1) % 0xffffff);
+			const inc	= (SEQ_NUMBER=(SEQ_NUMBER+1) % 0xFFFFFFFF);
 			const buff	= new Uint8Array(20);
 			const view	= new DataView(buff.buffer);
 			
