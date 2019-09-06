@@ -109,7 +109,6 @@ export async function LoadResource(...args) {
 								arg_names.push(`return \`${ctnt}\``);
 
 								const func = new Function(...arg_names);
-								resolve(func);
 								resolve({type:RES_TYPE.HTML_TEMPLATE, result:func})
 							}
 							else {
@@ -148,8 +147,7 @@ export async function LoadResource(...args) {
 			({type:res_type, result})=>{
 				const ret_val = {
 					loaded:true,
-					id:RES_ID,
-					result:result||RES_ID
+					id:RES_ID
 				};
 			
 				switch(res_type) {
@@ -157,18 +155,30 @@ export async function LoadResource(...args) {
 					case RES_TYPE.JS:
 					case RES_TYPE.IMAGE:
 					case RES_TYPE.CSS:
-						ret_val.element = result;
+						Object.assign(ret_val, {
+							element: result,
+							result: RES_ID
+						});
 						break;
 					
 					case RES_TYPE.SHADOWED_JS:
+						Object.assign(ret_val, {
+							result
+						});
 						break;
 					
 					case RES_TYPE.ES_MODULE:
-						ret_val.exports = result;
+						Object.assign(ret_val, {
+							exports: result,
+							result
+						});
 						break;
 					
 					case RES_TYPE.HTML_TEMPLATE:
-						ret_val.tmpl = result;
+						Object.assign(ret_val, {
+							tmpl: result,
+							result
+						});
 						break;
 				}
 				
