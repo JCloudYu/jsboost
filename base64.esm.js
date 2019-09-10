@@ -79,15 +79,10 @@ export function Base64Encode(input) {
 **/
 export function Base64Decode(base64Str) {
 	let _tmp;
-
-	if ( typeof base64Str !== "string" ) {
-		throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
-	}
+	base64Str = '' + base64Str;
 	
 	const matches = base64Str.match(BASE64_FORMAT_CHECK);
-	if ( !matches ) {
-		throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
-	}
+	if ( !matches ) { return null; }
 	
 	base64Str = matches[1];
 	
@@ -109,7 +104,7 @@ export function Base64Decode(base64Str) {
 			break;
 			
 		default:
-			throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
+			return null;
 	}
 	
 	
@@ -224,19 +219,14 @@ export function Base64SortEncode(input) {
 /**
  * Decode base64 sortable encoded data
  * @param {String} base64Str
- * @return {ArrayBuffer}
+ * @return {ArrayBuffer|null}
 **/
 export function Base64SortDecode(base64Str) {
 	let _tmp;
-
-	if ( typeof base64Str !== "string" ) {
-		throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
-	}
+	base64Str = '' + base64Str;
 	
 	const matches = base64Str.match(BASE64_FORMAT_CHECK);
-	if ( !matches ) {
-		throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
-	}
+	if ( !matches ) { return null; }
 	
 	base64Str = matches[1];
 	

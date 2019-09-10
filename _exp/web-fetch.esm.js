@@ -114,7 +114,7 @@ async function NodeFetch(url, init={}) {
 		req.end(body);
 	});
 }
-async function BrowserFetch(url, init={}) {
+function BrowserFetch(url, init={}) {
 	let resolve=DO_NOTHING, reject=DO_NOTHING;
 	const promise = new Promise((_res, _rej)=>{resolve=_res; reject=_rej;});
 	
