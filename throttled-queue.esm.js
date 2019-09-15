@@ -2,68 +2,64 @@
 *	Author: JCloudYu
 *	Create: 2018/12/08
 **/
-import {FlattenedPromise as PassivePromise, ThrottledTimeout} from "./_helper.esm.js";
+import {FlattenedPromise, ThrottledTimeout} from "./_helper.esm.js";
 
 
 
-const _ThrottledQueue = new WeakMap();
+const PRIVATE = new WeakMap();
 export class ThrottledQueue {
 	constructor() {
-		_ThrottledQueue.set(this, {
+		PRIVATE.set(this, {
 			_timeout: ThrottledTimeout(),
 			_queue: []
 		});
 		
 		this.consumer = null;
 	}
-	
-	/** @type {Number} */
 	get length() {
-		return _ThrottledQueue.get(this)._queue.length;
+		return PRIVATE.get(this)._queue.length;
 	}
-	
-	/**
-	 * Create
-	 * @param {*} info
-	 * @param {boolean} [awaitable=true]
-	 * @return {Promise<*>|null};
-	**/
-	push(info=null, awaitable=true) {
-		const {_queue, _timeout} = _ThrottledQueue.get(this);
-		const item = {info, ctrl:false};
-		
-		_queue.push(item);
-		_timeout(___CONSUME_QUEUE, 0, this);
-		
-		if ( awaitable ) {
-			item.ctrl = PassivePromise();
-			return item.ctrl.promise;
-		}
-		
-		return null;
+	enqueue(job) {
+		___ENQUEUE_JOB.call(this, {job});
+		return this;
 	}
-	
-	/**
-	 * Create a ThrottledQueue object with default consumer api
-	 *
-	 * @param {function(*[]):Promise<Boolean>} consumer
-	 * @returns {ThrottledQueue}
-	**/
+	enqueueAwait(job) {
+		const state_ctrl = FlattenedPromise();
+		___ENQUEUE_JOB.call(this, {job, state:state_ctrl});
+		
+		return state_ctrl.promise;
+	}
+	push(job=null, awaitable=true) {
+		console.error( "ThrottledQueue::push is deprecated!\nPlease use ThrottledQueue::enqueue or ThrottledQueue::enqueueAwait instead!" );
+		return awaitable ? this.enqueueAwait(job) : this.enqueue(job);
+	}
 	static CreateQueueWithConsumer(consumer) {
+		console.error( "ThrottledQueue.CreateQueueWithConsumer is deprecated!\nPlease use ThrottledQueue.CreateQueue instead!" );
+		return ThrottledQueue.CreateQueue(consumer);
+	}
+	static CreateQueue(consumer) {
 		const queue = new ThrottledQueue();
 		queue.consumer = consumer;
 		return queue;
 	}
 }
-async function ___CONSUME_QUEUE(inst) {
+function ___ENQUEUE_JOB(job_item) {
+	const {_queue, _timeout} = PRIVATE.get(this);
+	
+	_queue.push(job_item);
+	_timeout(___CONSUME_QUEUE, 0, this);
+}
+function ___CONSUME_QUEUE(inst) {
 	if ( typeof inst.consumer !== "function" ) return;
 	
 	
 	
-	const {_queue, _timeout} = _ThrottledQueue.get(inst);
-	let should_continue = await inst.consumer(_queue);
-	if ( should_continue === false ) return;
-	if ( _queue.length <= 0 ) return;
-
-	_timeout(___CONSUME_QUEUE, 0 , inst);
+	const {_queue, _timeout} = PRIVATE.get(inst);
+	return Promise.resolve()
+	.then(()=>inst.consumer(_queue))
+	.then((should_continue)=>{
+		if ( should_continue !== false && _queue.length > 0 ) {
+			_timeout(___CONSUME_QUEUE, 0 , inst);
+		}
+	});
 }
