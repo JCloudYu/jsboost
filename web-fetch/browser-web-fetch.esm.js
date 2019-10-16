@@ -2,8 +2,8 @@
  *	Author: JCloudYu
  *	Create: 2019/10/16
 **/
-import {UTF8String} from "./utf8string.esm.js";
-import {ObjectAssignProperties} from "./_helper.esm.js";
+import {UTF8String} from "../utf8string.esm.js";
+import {ObjectAssignProperties} from "../_helper.esm.js";
 
 
 const CAMEL_CASE_PATTERN = /(\w)(\w*)(\W*)/g;

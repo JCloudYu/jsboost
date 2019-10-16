@@ -7,7 +7,7 @@ import {BrowserWebFetch} from "./web-fetch/browser-web-fetch.esm.js";
 
 
 
-const nodejs_env = (typeof Buffer === "undefined");
+const nodejs_env = (typeof Buffer !== "undefined");
 export function WebFetch(url, init={}) {
 	if ( nodejs_env ) {
 		return NodeWebFetch(url, init);
