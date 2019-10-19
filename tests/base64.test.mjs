@@ -7,7 +7,8 @@ import assert from "assert";
 import {
 	Base64Encode, Base64Decode,
 	Base64URLEncode, Base64URLDecode,
-	Base64SortEncode, Base64SortDecode
+	Base64SortEncode, Base64SortDecode,
+	Base64URLSortEncode, Base64URLSortDecode
 } from "../base64.esm.js";
 
 
@@ -27,9 +28,13 @@ init_context(()=>{
 		assert(result.compare(truth_raw) === 0);
 	});
 	
-	
 	test_group( "Testing Base64Sort Encode / Decode", ()=>{
 		const result = Buffer.from(Base64SortDecode(Base64SortEncode(truth_raw.buffer)));
+		assert(result.compare(truth_raw) === 0);
+	});
+	
+	test_group( "Testing Base64URLSort Encode / Decode", ()=>{
+		const result = Buffer.from(Base64URLSortDecode(Base64URLSortEncode(truth_raw.buffer)));
 		assert(result.compare(truth_raw) === 0);
 	});
 });
