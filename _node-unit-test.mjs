@@ -2,40 +2,78 @@
  *	Author: JCloudYu
  *	Create: 2019/02/06
 **/
-import fs from "fs";
-import path from "path";
-import os from "os";
-
 (async()=>{
-	const __dirname = path.dirname((import.meta.url).substring(os.platform()==="win32"?8:7));
+	let fs, path, dir, acquire;
+	if ( typeof require === "undefined" ) {
+		const {default:os} = await import( 'os' );
+		({default:fs} = await import( 'fs' ));
+		({default:path} = await import( 'path' ));
+		
+		const is_win = (os.platform().substring(0, 3) === "win");
+		const [, script_path] = process.argv;
+		dir = path.dirname(path.resolve(script_path));
+		
+		const __proto = `file://${is_win? "/" : ""}`;
+		acquire = async function import_es_module(path, check_name=true) {
+			if ( check_name && path.substr(-8) !== ".test.js" && path.substr(-9) !== ".test.mjs" ) return;
+			return import( `${__proto}${path}` );
+		};
+	}
+	else {
+		fs	 = require( 'fs' );
+		path = require( 'path' );
+		dir	 = __dirname;
+		
+		acquire = async function import_module(path, check_name=true) {
+			if ( check_name && path.substr(-8) !== ".test.js" ) return;
+			return require( path );
+		};
+	}
+
+
+
 	
+	
+	
+	
+	
+	const MAX_TOTAL_LEVELS = 10;
+	const MAX_NESTED_LEVEL = MAX_TOTAL_LEVELS - 1;
 	const TEST_SCRIPTS = process.argv.slice(2);
 	
-	const root_group = __CREATE_GROUP();
-	let current_scope = root_group;
+	const root_procedure = __CREATE_PROCEDURE();
+	root_procedure.type = 'none';
+	root_procedure.script = null;
 	
-	global.test_group	= __ADD_TEST_GROUP;
-	global.unit_test	= __ADD_UNIT_TEST;
+	
+	
+	let current_script = null;
+	let current_scope = root_procedure;
+	
+	global.test_group	 = __SCHEDULE_GROUP_PROCEDURE;
+	global.unit_test	 = __SCHEDULE_TEST_PROCEDURE;
+	global.init_context  = __INIT_TEST_CONTEXT;
+	global.run_procedure = __SCHEDULE_SILENT_PROCEDURE;
 	
 	
 	
 	// region [ Load all modules ended with .test.js ]
 	try {
 		if ( TEST_SCRIPTS.length === 0 ) {
-			const TEST_PATH = `${__dirname}/tests`;
+			const TEST_PATH = `${dir}/tests`;
 			const dir_list = fs.readdirSync(TEST_PATH, {withFileTypes:true});
 			for(const fInfo of dir_list) {
 				const fPath = `${TEST_PATH}/${fInfo.name}`;
 				if ( !fInfo.isFile() ) continue;
-				if ( fPath.substr(-8) !== ".test.js" && fPath.substr(-9) !== ".test.mjs" ) continue;
-
-				await import( fPath );
+				
+				await acquire( current_script=fPath );
 			}
 		}
 		else {
 			for ( const SCRIPT of TEST_SCRIPTS ) {
-				const SCRIPT_PATH = path.resolve(`${__dirname}`, SCRIPT);
-				await import( SCRIPT_PATH );
+				const SCRIPT_PATH = path.resolve(`${dir}`, SCRIPT);
+				
+				await acquire( current_script=SCRIPT_PATH, false );
 			}
 		}
 	}
@@ -45,123 +83,176 @@ import os from "os";
 	// endregion
 	
 	// region [ Run tests ]
-	await __RUN_TEST_GROUP(root_group);
-	await __PRINT_RESULT(root_group);
+	await __RUN_TEST_PROCEDURE(root_procedure);
+	await __PRINT_RESULT(root_procedure);
 	// endregion
 	
+	
+	
+	
+	
+	
+	
+	
+	
 	// region [ Internal Helper Functions ]
-	async function __RUN_TEST_GROUP(group) {
-		current_scope = group;
-		if ( group.parent !== null ) {
-			try {
-				await group.group_op();
-			}
-			catch(e) {
-				group.error = e;
-				return (group.passed = false);
-			}
-		}
-		
-		
+	async function __RUN_TEST_PROCEDURE(procedure) {
+		current_scope = procedure;
 		
 		let group_passed = true;
-		for( const test of group.tests ) {
-			await __RUN_UNIT_TEST(test);
-			group_passed = group_passed && test.passed;
+		if ( procedure.parent !== null ) {
+			let _start_time = Date.now();
+			try {
+				await procedure.operation();
+				procedure.exec_time = Date.now() - _start_time;
+			}
+			catch(e) {
+				procedure.error = e;
+				procedure.passed = false;
+				procedure.exec_time = Date.now() - _start_time;
+				return;
+			}
 		}
 		
-		for( const sub_group of group.child_groups ) {
-			await __RUN_TEST_GROUP(sub_group);
-			group_passed = group_passed && sub_group.passed;
+		
+		
+		for( const _procedure of procedure.children ) {
+			await __RUN_TEST_PROCEDURE(_procedure);
+			group_passed = group_passed && _procedure.passed;
 		}
 		
-		return (group.passed = group_passed);
+		return (procedure.passed = group_passed);
 	}
-	async function __RUN_UNIT_TEST(test) {
-		current_scope = test;
-		try {
-			await test.test_op();
-			test.passed = true;
-		}
-		catch(e) {
-			test.error = e;
-			test.passed = false;
-		}
-		
-		return test.passed;
-	}
-	async function __PRINT_RESULT(group) {
-		if ( group.parent !== null ) {
-			const prefix = group.passed ? "\u001b[92m\u2714 " : "\u001b[91m\u2718 ";
-			const indent = __INDENT(group.level);
+	async function __PRINT_RESULT(procedure) {
+		if ( procedure.type === 'silent' ) return;
+	
+		if ( procedure.parent !== null ) {
+			const color = procedure.passed ? "\u001b[92m" : "\u001b[91m";
+			const prefix = procedure.passed ? "\u2714 " : "\u2718 ";
+			const indent = __INDENT(procedure.level);
+			const exec_time = (procedure.type === "test") ? ` ( \u001b[93m${procedure.exec_time/1000} s ${color})` : '';
+			
 			let error_msg = '';
-			if (group.error) {
-				error_msg = `\u001b[93m( ${group.error} )\u001b[39m`;
+			if (procedure.error) {
+				error_msg = `\u001b[93m( ${procedure.error} )\u001b[39m`;
 			}
 			
-			console.log(`${indent}${prefix}${group.message}\u001b[39m ${error_msg}`);
-			if (group.error) {
-				console.error(group.error);
+			console.log(`${indent}${color}${prefix}${procedure.message}${exec_time}\u001b[39m ${error_msg}`);
+			if (procedure.error) {
+				console.error(procedure.error);
 			}
 		}
 		
-		for(const test of group.tests) {
-			const prefix = test.passed ? "\u001b[92m\u2714 " : "\u001b[91m\u2718 ";
-			const indent = __INDENT(test.level);
-			let error_msg = '';
-			if (test.error) {
-				error_msg = `\u001b[93m( ${test.error} )\u001b[39m`;
-			}
-			
-			console.log(`${indent}${prefix}${test.message}\u001b[39m ${error_msg}`);
-			if (test.error) {
-				console.error(test.error);
-			}
-		}
-		
-		for(const sub_group of group.child_groups) {
-			await __PRINT_RESULT(sub_group);
+		for(const _procedure of procedure.children) {
+			await __PRINT_RESULT(_procedure);
 		}
 	}
 	
-	function __ADD_TEST_GROUP(message, group_op) {
+	
+	
+	function __INIT_TEST_CONTEXT(group_op) {
 		if ( typeof group_op !== "function" ) {
-			throw new SyntaxError( "The second argument of `test_group` must be a function!" );
+			throw new SyntaxError( "The argument of `init_context` must be a function!" );
 		}
 	
-		if ( current_scope.type !== 'group' ) {
-			throw new SyntaxError( "`test_group` can only be invoked within another `test_group` call!" );
+		if ( current_scope.type !== 'none' ) {
+			throw new SyntaxError( "`init_context can only be invoked once in the top most scope!`" );
 		}
 		
-		if ( current_scope.level >= 4 ) {
+		if ( current_scope.level >= MAX_NESTED_LEVEL ) {
 			throw new RangeError( "Maximum nested level has been reached!" );
 		}
 		
 		
 		
-		const group = __CREATE_GROUP();
-		group.message	= message;
-		group.group_op	= group_op;
-		group.level		= current_scope.level+1;
-		group.parent	= current_scope;
-		current_scope.child_groups.push(group);
+		const group = __CREATE_PROCEDURE();
+		group.type = 'group';
+		group.is_context = true;
+		group.message = current_script;
+		group.operation = group_op;
+		group.level = current_scope.level+1;
+		group.parent = current_scope;
+		current_scope.children.push(group);
 	}
-	function __ADD_UNIT_TEST( message, test_op ) {
+	function __SCHEDULE_GROUP_PROCEDURE(message, group_op) {
+		if ( typeof group_op !== "function" ) {
+			throw new SyntaxError( "The second argument of `test_group` must be a function!" );
+		}
+	
+		if ( current_scope.type === 'none' ) {
+			throw new SyntaxError( "`init_context` must be invoked before `test_group` call!" );
+		}
+		else
+		if ( current_scope.type !== 'group' ) {
+			throw new SyntaxError( "`test_group` can only be invoked within another `test_group` call!" );
+		}
+		
+		if ( current_scope.level >= MAX_NESTED_LEVEL ) {
+			throw new RangeError( "Maximum nested level has been reached!" );
+		}
+		
+		
+		
+		const group = __CREATE_PROCEDURE();
+		group.type = 'group';
+		group.message = message;
+		group.operation = group_op;
+		group.level = current_scope.level+1;
+		group.parent = current_scope;
+		current_scope.children.push(group);
+	}
+	function __SCHEDULE_TEST_PROCEDURE( message, test_op ) {
 		if ( typeof test_op !== "function" ) {
 			throw new SyntaxError( "The second argument of `unit_test` must be a function!" );
 		}
 	
+		if ( current_scope.type === 'none' ) {
+			throw new SyntaxError( "`init_context` must be invoked before `unit_test` call!" );
+		}
+		else
 		if ( current_scope.type !== 'group' ) {
 			throw new SyntaxError( "`unit_test` can only be invoked within a `test_group` call!" );
 		}
-	
-		const test = __CREATE_TEST();
+		
+		
+		
+		const test = __CREATE_PROCEDURE();
+		test.type = 'test';
 		test.message = message;
-		test.test_op = test_op;
-		test.level	 = current_scope.level+1;
-		test.parent	 = current_scope;
-		current_scope.tests.push(test);
+		test.operation = test_op;
+		test.level = current_scope.level+1;
+		test.parent	= current_scope;
+		current_scope.children.push(test);
 	}
+	function __SCHEDULE_SILENT_PROCEDURE(operation_op) {
+		if ( typeof operation_op !== "function" ) {
+			throw new SyntaxError( "The argument of `init_context` must be a function!" );
+		}
+	
+		if ( current_scope.type === 'none' ) {
+			throw new SyntaxError( "`init_context` must be invoked before `run_procedure` call!" );
+		}
+		else
+		if ( current_scope.type !== 'group' ) {
+			throw new SyntaxError( "`run_procedure` can only be invoked within another `run_procedure` call!" );
+		}
+		
+		if ( current_scope.level >= MAX_NESTED_LEVEL ) {
+			throw new RangeError( "Maximum nested level has been reached!" );
+		}
+		
+		
+		
+		const group = __CREATE_PROCEDURE();
+		group.type = 'silent';
+		group.operation = operation_op;
+		group.level = current_scope.level+1;
+		group.parent = current_scope;
+		current_scope.children.push(group);
+	}
+	
+	
+	
 	function __INDENT(step=0) {
 		let indent = '';
 		for(let i=0; i<step; i++) {
@@ -169,35 +260,19 @@ import os from "os";
 		}
 		return indent;
 	}
-	function __CREATE_GROUP() {
-		return Object.assign(
-			Object.create(null),
-			{
-				type: 'group',
-				message: null,
-				group_op: null,
-				parent: null,
-				level: -1,
-				tests: [],
-				child_groups: [],
-				passed: true,
-				error: null
-			}
-		);
-	}
-	function __CREATE_TEST() {
-		return Object.assign(
-			Object.create(null),
-			{
-				type: 'test',
-				level: -1,
-				message: null,
-				test_op: null,
-				parent: null,
-				passed: true,
-				error: null
-			}
-		);
+	function __CREATE_PROCEDURE() {
+		return Object.assign(Object.create(null), {
+			type: 'scheduled',
+			level: -1,
+			is_context: false,
+			message: null,
+			operation: null,
+			children: [],
+			
+			parent: null,
+			passed: true,
+			error: null
+		});
 	}
 	// endregion
 })().catch((e)=>{throw e;});
