@@ -8,7 +8,6 @@ import {ExtractArrayBuffer} from "./_helper.esm.js";
 
 const BASE64_ENCODE_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
 const BASE64URL_ENCODE_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'.split('');
-const BASE64SORT_ENCODE_CHAR = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'.split('');
 const BASE64_DECODE_CHAR = {
 	'A':  0, 'B':  1, 'C':  2, 'D':  3, 'E':  4, 'F':  5, 'G':  6, 'H':  7,
 	'I':  8, 'J':  9, 'K': 10, 'L': 11, 'M': 12, 'N': 13, 'O': 14, 'P': 15,
@@ -20,18 +19,7 @@ const BASE64_DECODE_CHAR = {
 	'4': 56, '5': 57, '6': 58, '7': 59, '8': 60, '9': 61, '+': 62, '/': 63,
 	'-': 62, '_': 63
 };
-const BASE64SORT_DECODE_CHAR = {
-	'-':  0, 'A':  1, 'B':  2, 'C':  3, 'D':  4, 'E':  5, 'F':  6, 'G':  7,
-	'H':  8, 'I':  9, 'J': 10, 'K': 11, 'L': 12, 'M': 13, 'N': 14, 'O': 15,
-	'P': 16, 'Q': 17, 'R': 18, 'S': 19, 'T': 20, 'U': 21, 'V': 22, 'W': 23,
-	'X': 24, 'Y': 25, 'Z': 26, '_': 27, 'a': 28, 'b': 29, 'c': 30, 'd': 31,
-	'e': 32, 'f': 33, 'g': 34, 'h': 35, 'i': 36, 'j': 37, 'k': 38, 'l': 39,
-	'm': 40, 'n': 41, 'o': 42, 'p': 43, 'q': 44, 'r': 45, 's': 46, 't': 47,
-	'u': 48, 'v': 49, 'w': 50, 'x': 51, 'y': 52, 'z': 53, '0': 54, '1': 55,
-	'2': 56, '3': 57, '4': 58, '5': 59, '6': 60, '7': 61, '8': 62, '9': 63,
-};
 const BASE64_FORMAT_CHECK = /^([0-9a-zA-Z+\-/_]+)={0,2}$/;
-
 
 /**
  * Encode data into base64 representation
@@ -144,6 +132,8 @@ export function Base64Decode(base64Str) {
 	return bytes.buffer;
 }
 
+export const Base64URLDecode = Base64Decode;
+
 /**
  * Encode data into base64url representation
  * @param {ArrayBuffer} input
@@ -180,6 +170,20 @@ export function Base64URLEncode(input) {
 	return base64Str;
 }
 
+
+
+const BASE64SORT_ENCODE_CHAR = '0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'.split('');
+const BASE64SORT_DECODE_CHAR = {
+	'0':  0, '1':  1, '2':  2, '3':  3, '4':  4, '5':  5, '6':  6, '7':  7,
+	'8':  8, '9':  9, '=': 10, 'A': 11, 'B': 12, 'C': 13, 'D': 14, 'E': 15,
+	'F': 16, 'G': 17, 'H': 18, 'I': 19, 'J': 20, 'K': 21, 'L': 22, 'M': 23,
+	'N': 24, 'O': 25, 'P': 26, 'Q': 27, 'R': 28, 'S': 29, 'T': 30, 'U': 31,
+	'V': 32, 'W': 33, 'X': 34, 'Y': 35, 'Z': 36, '_': 37, 'a': 38, 'b': 39,
+	'c': 40, 'd': 41, 'e': 42, 'f': 43, 'g': 44, 'h': 45, 'i': 46, 'j': 47,
+	'k': 48, 'l': 49, 'm': 50, 'n': 51, 'o': 52, 'p': 53, 'q': 54, 'r': 55,
+	's': 56, 't': 57, 'u': 58, 'v': 59, 'w': 60, 'x': 61, 'y': 62, 'z': 63,
+};
+const BASE64SORT_FORMAT_CHECK = /^([0-9=A-Z_a-z]+)$/;
 /**
  * Encode data into sortable base64 representation
  * @param {ArrayBuffer} input
@@ -225,7 +229,7 @@ export function Base64SortDecode(base64Str) {
 	let _tmp;
 	base64Str = '' + base64Str;
 	
-	const matches = base64Str.match(BASE64_FORMAT_CHECK);
+	const matches = base64Str.match(BASE64SORT_FORMAT_CHECK);
 	if ( !matches ) { return null; }
 	
 	base64Str = matches[1];
@@ -248,7 +252,7 @@ export function Base64SortDecode(base64Str) {
 			break;
 			
 		default:
-			throw new Error( "Given input is neither base64 encoded nor base64url encoded!" );
+			throw new Error( "Given input is not base64sort encoded!" );
 	}
 	
 	
@@ -287,5 +291,3 @@ export function Base64SortDecode(base64Str) {
 	
 	return bytes.buffer;
 }
-
-export {Base64Decode as Base64URLDecode}
