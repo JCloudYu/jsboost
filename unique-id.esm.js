@@ -29,7 +29,7 @@ export function fnv1a32(input){
 
 
 
-let PID = (Math.random() * 65535)|0;
+let PID  = (Math.random() * 65535)|0;
 let PPID = (Math.random() * 65535)|0;
 let MACHINE_ID = fnv1a32((()=>{
 	let count = 30, str = '';
@@ -158,23 +158,37 @@ export class UniqueId {
 		return this.toString();
 	}
 	toBytes() { return this.bytes.slice(0); }
+	
+	
+	
 	static from(input=null) {
 		try { return new UniqueId(input); } catch(e) { return null; }
 	}
+	static set machine_id(val) { MACHINE_ID = `${val}`; }
+	static get machine_id() { return MACHINE_ID; }
+	
+	static set pid(val) { PID = `${val}`; }
+	static get pid() { return PID; }
+	
+	static set ppid(val) { PPID = `${val}`; }
+	static get ppid() { return PPID; }
 }
 
 
 
-export async function InitAccordingToEnv() {
+export async function BindMachineID() {
 	if ( typeof Buffer !== "undefined" ) {
 		const {default:os} = await import('os');
 		
-		MACHINE_ID = fnv1a32(os.hostname());
-		PID = process.pid;
-		PPID = process.ppid;
+		UniqueId.machine_id = fnv1a32(os.hostname());
+		UniqueId.pid = process.pid;
+		UniqueId.ppid = process.ppid;
 	}
 	else
 	if ( typeof window !== "undefined" ) {
-		MACHINE_ID = window.location.host;
+		UniqueId.machine_id = fnv1a32(window.location.host||'');
+		UniqueId.pid = (Math.random() * 65535)|0;
+		UniqueId.ppid = (Math.random() * 65535)|0;
 	}
 }
+export { BindMachineID as InitAccordingToEnv };
