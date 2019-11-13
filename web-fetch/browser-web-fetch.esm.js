@@ -47,7 +47,7 @@ export function BrowserWebFetch(url, init={}) {
 			case READY_STATE.OPENED:
 				request.withCredentials = (mode === 'cors') && (credentials === 'include' || credentials === 'same-origin' );
 				request.timeout = timeout;
-				request.responseType = 'arraybuffer';
+				request.responseType = 'blob';
 				
 				// NOTE: Set request headers
 				for (const header_name in headers) {
@@ -71,7 +71,7 @@ export function BrowserWebFetch(url, init={}) {
 	request.addEventListener('abort', ON_ERROR.bind(request, reject));
 	request.addEventListener('error', ON_ERROR.bind(request, reject));
 	request.addEventListener('load', function(e) {
-		const response_bytes = new Uint8Array(request.response);
+		const response_blob = request.response;
 		const response = ObjectAssignProperties(Object.create(null), {
 			request,
 			ok: (request.status >= 200 && request.status <= 299),
@@ -80,15 +80,18 @@ export function BrowserWebFetch(url, init={}) {
 			url: request.responseURL,
 			headers: request.getAllResponseHeaders(),
 			text: async function(){
+				const response_bytes = await READ_ARRAY_BUFFER_FROM_BLOB(response_blob);
 				return UTF8String.Decode(response_bytes);
 			},
-			blob: async function(){
-				return new Blob([response_bytes]);
+			blob: function(){
+				return response_blob;
 			},
-			arrayBuffer: async function() {
-				return response_bytes;
+			arrayBuffer: function() {
+				return READ_ARRAY_BUFFER_FROM_BLOB(response_blob);
 			},
 			json: async function(throw_if_error=true) {
+				const response_bytes = await READ_ARRAY_BUFFER_FROM_BLOB(response_blob);
+				
 				try {
 					return JSON.parse(UTF8String.Decode(response_bytes));
 				}
@@ -129,4 +132,12 @@ function ON_ERROR(reject, e) {
 		ok: false
 	});
 	reject(response);
+}
+function READ_ARRAY_BUFFER_FROM_BLOB(blob) {
+	return new Promise((resolve, reject)=>{
+		const reader = new FileReader();
+		reader.onerror = reject;
+		reader.onload = ()=>resolve(reader.result);
+		reader.readAsArrayBuffer(blob);
+	});
 }
