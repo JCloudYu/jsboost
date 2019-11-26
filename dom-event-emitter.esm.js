@@ -10,7 +10,6 @@ export class DOMEventEmitter {
 		PRIVATES._event_queue = [];
 	}
 	
-	// region [ API Methods ]
 	/**
 	 * Add a listener to a specific event
 	 *
@@ -23,9 +22,20 @@ export class DOMEventEmitter {
 			throw new TypeError( "Given listener should be a function" );
 		}
 	
+		eventName = ('' + eventName).trim();
+		const comment_splitter = eventName.indexOf('#');
+		if ( comment_splitter >= 0 ) {
+			eventName = eventName.substring(0, comment_splitter);
+		}
+		
+		if ( eventName === '' ) {
+			throw new SyntaxError( "Given event name must be a none-empty string!" );
+		}
+		
+		
+		
 		const {_event_queue} = WEAK_RELATION_MAP.get(this);
-		const name = eventName.toString();
-		const queue = _event_queue[name] = _event_queue[name]||[];
+		const queue = _event_queue[eventName] = _event_queue[eventName]||[];
 		queue.push(listener);
 		
 		return this;
@@ -161,23 +171,15 @@ export class DOMEventEmitter {
 	 * @param {...*} args The arguments that are passed to the listeners
 	 * @returns {DOMEventEmitter}
 	**/
-	dispatch(eventName, ...args) {
-		const event = __PREPARE_EVENT(eventName);
-		if ( !event ) { return this; }
-		
-		
-		
-		const {_event_queue} = WEAK_RELATION_MAP.get(this);
-		const name = event.type;
-		const queue = _event_queue[name];
-		if ( !Array.isArray(queue) ) { return this; }
-		
-		
-		
-		for( let func of queue ) {
-			func.call(this, event, ...args);
-			if ( !event.propagation ) { break; }
-		}
+	dispatchEvent(eventName, ...args) {
+		__DISPATCH_EVENT(eventName, ...args)
+		.catch((e)=>{
+			if ( e instanceof Error ) {
+				e._stack_trace = e.stack.split(/\r\n|\n/).map((item)=>item.trim());
+			}
+			
+			setTimeout(()=>{throw e});
+		});
 		
 		return this;
 	}
@@ -190,25 +192,9 @@ export class DOMEventEmitter {
 	 * @param {...*} args The arguments that are passed to the listeners
 	 * @returns {Promise<DOMEventEmitter>}
 	**/
-	async dispatchAwait(eventName, ...args) {
-		const event = __PREPARE_EVENT(eventName);
-		if ( !event ) { return this; }
-		
-		
-		
-		const {_event_queue} = WEAK_RELATION_MAP.get(this);
-		const name = event.type;
-		const queue = _event_queue[name];
-		if ( !Array.isArray(queue) ) { return this; }
-		
-		
-		
-		for( let func of queue ) {
-			await func.call(this, event, ...args);
-			if ( !event.propagation ) { break; }
-		}
-		
-		return this;
+	dispatchEventAwait(eventName, ...args) {
+		return __DISPATCH_EVENT(eventName, ...args)
+		.then(()=>this);
 	}
 	
 	/**
@@ -219,7 +205,7 @@ export class DOMEventEmitter {
 	 * @returns {DOMEventEmitter}
 	**/
 	emit(eventName, ...args) {
-		return this.dispatch(eventName, ...args);
+		return this.dispatchEvent(eventName, ...args);
 	}
 	
 	/**
@@ -231,11 +217,12 @@ export class DOMEventEmitter {
 	 * @returns {Promise<DOMEventEmitter>}
 	**/
 	emitAwait(eventName, ...args) {
-		return this.dispatchAwait(eventName, ...args);
+		return this.dispatchEventAwait(eventName, ...args);
 	}
-	// endregion
 	
-	// region [ Getters and setters ]
+	
+	
+	
 	/**
 	 * Retrieve a copy of specific event's listener queue
 	 *
@@ -264,15 +251,29 @@ export class DOMEventEmitter {
 		return _events;
 	}
 	set events(val) { throw new TypeError("Cannot assign to read only property 'events' of <DOMEventEmitter>"); }
-	// endregion
-	
-	// region [ Helper functions ]
-	// endregion
 }
 
 
 
 // region [ Helper functions ]
+async function __DISPATCH_EVENT(eventName, ...args) {
+	const event = __PREPARE_EVENT(eventName);
+	if ( !event ) return;
+	
+	
+	
+	const {_event_queue} = WEAK_RELATION_MAP.get(this);
+	const name = event.type;
+	const queue = _event_queue[name];
+	if ( !Array.isArray(queue) ) { return this; }
+	
+	
+	
+	for( let func of queue ) {
+		await func.call(this, event, ...args);
+		if ( !event.propagation ) { break; }
+	}
+}
 function __ONCE_WRAPPER(emitter, eventName, listener) {
 	if ( typeof listener !== "function" ) {
 		throw new TypeError( "Given listener should be a function" );

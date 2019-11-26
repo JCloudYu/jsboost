@@ -10,7 +10,8 @@ export class EventEmitter {
 		PRIVATES._event_queue = [];
 	}
 	
-	// region [ API Methods ]
+	
+	
 	/**
 	 * Add a listener to a specific event
 	 *
@@ -23,9 +24,20 @@ export class EventEmitter {
 			throw new TypeError( "Given listener should be a function" );
 		}
 	
+		eventName = ('' + eventName).trim();
+		const comment_splitter = eventName.indexOf('#');
+		if ( comment_splitter >= 0 ) {
+			eventName = eventName.substring(0, comment_splitter);
+		}
+		
+		if ( eventName === '' ) {
+			throw new SyntaxError( "Given event name must be a none-empty string!" );
+		}
+		
+		
+		
 		const {_event_queue} = WEAK_RELATION_MAP.get(this);
-		const name = eventName.toString();
-		const queue = _event_queue[name] = _event_queue[name]||[];
+		const queue = _event_queue[eventName] = _event_queue[eventName]||[];
 		queue.push(listener);
 		
 		return this;
@@ -161,7 +173,7 @@ export class EventEmitter {
 	 * @param {...*} args The arguments that are passed to the listeners
 	 * @returns {EventEmitter}
 	**/
-	dispatch(eventName, ...args) {
+	dispatchEvent(eventName, ...args) {
 		const {_event_queue} = WEAK_RELATION_MAP.get(this);
 		const name = eventName.toString();
 		const queue = _event_queue[name];
@@ -182,7 +194,7 @@ export class EventEmitter {
 	 * @param {...*} args The arguments that are passed to the listeners
 	 * @returns {Promise<EventEmitter>}
 	**/
-	async dispatchAwait(eventName, ...args) {
+	async dispatchEventAwait(eventName, ...args) {
 		const {_event_queue} = WEAK_RELATION_MAP.get(this);
 		const name = eventName.toString();
 		const queue = _event_queue[name];
@@ -203,7 +215,7 @@ export class EventEmitter {
 	 * @returns {EventEmitter}
 	**/
 	emit(eventName, ...args) {
-		return this.dispatch(eventName, ...args);
+		return this.dispatchEvent(eventName, ...args);
 	}
 	
 	/**
@@ -215,11 +227,14 @@ export class EventEmitter {
 	 * @returns {Promise<EventEmitter>}
 	**/
 	emitAwait(eventName, ...args) {
-		return this.dispatchAwait(eventName, ...args);
+		return this.dispatchEventAwait(eventName, ...args);
 	}
-	// endregion
 	
-	// region [ Getters and setters ]
+	
+	
+	
+	
+	
 	/**
 	 * Retrieve a copy of specific event's listener queue
 	 *
@@ -248,7 +263,6 @@ export class EventEmitter {
 		return _events;
 	}
 	set events(val) { throw new TypeError("Cannot assign to read only property 'events' of <EventEmitter>"); }
-	// endregion
 }
 
 
