@@ -172,7 +172,7 @@ export class DOMEventEmitter {
 	 * @returns {DOMEventEmitter}
 	**/
 	dispatchEvent(eventName, ...args) {
-		__DISPATCH_EVENT(eventName, ...args)
+		__DISPATCH_EVENT.call(this, eventName, ...args)
 		.catch((e)=>{
 			if ( e instanceof Error ) {
 				e._stack_trace = e.stack.split(/\r\n|\n/).map((item)=>item.trim());
@@ -193,7 +193,7 @@ export class DOMEventEmitter {
 	 * @returns {Promise<DOMEventEmitter>}
 	**/
 	dispatchEventAwait(eventName, ...args) {
-		return __DISPATCH_EVENT(eventName, ...args)
+		return __DISPATCH_EVENT.call(this, eventName, ...args)
 		.then(()=>this);
 	}
 	
