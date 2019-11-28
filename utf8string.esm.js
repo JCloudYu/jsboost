@@ -9,6 +9,7 @@ import {ExtractArrayBuffer} from "./_helper.esm.js";
 const ___IS_NODEJS = (typeof Buffer !== "undefined");
 const EMPTY_BUFFER	= new ArrayBuffer(0);
 const EMPTY_BYTES	= new Uint8Array(EMPTY_BUFFER);
+const UTF8_DECODE_CHUNK_SIZE = 100;
 
 export class UTF8String {
 	constructor(inputString='') {
@@ -167,6 +168,14 @@ export class UTF8String {
 				i += 3;
 			}
 		}
-		return String.fromCodePoint(...codePoints);
+		
+		
+		
+		let result_string = "";
+		while(codePoints.length > 0) {
+			const chunk = codePoints.splice(0, UTF8_DECODE_CHUNK_SIZE);
+			result_string += String.fromCharCode(...chunk);
+		}
+		return result_string;
 	}
 }
