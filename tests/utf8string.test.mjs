@@ -29,8 +29,9 @@ init_context(()=>{
 		
 		unit_test('4-byte sequence', ()=>{
 			let original = '𠁝🜓🝣𐩸🤩';
+		
 			let test = UTF8String.From(UTF8String.From(original)._ab);
-			assert(`${test}` === original);
+			assert(test.string === original);
 		});
 		
 		unit_test('random chinese string', ()=>{
