@@ -2,26 +2,59 @@
  *	Author: JCloudYu
  *	Create: 2019/12/13
 **/
-const TMPL_ITEM_PROXY = {
+const _PRIVATES = new WeakMap();
+class _HTMLElementAccessor {
+	constructor(element) {
+		if ( !(element instanceof Element) ) {
+			throw new TypeError( "HTMLElementAccessor constructor only accept Element instances!" );
+		}
+		
+		
+		const _PRIVATE = Object.assign(Object.create(null), {
+			element, exported:Object.create(null)
+		});
+		_PRIVATES.set(this, _PRIVATE);
+		
+		
+		const exported_items = element.querySelectorAll('[elm-export]');
+		for( const item of exported_items ) {
+			const export_name = item.getAttribute('elm-export');
+			_PRIVATE.exported[export_name] = item;
+		}
+	}
+}
+const HTMLElementAccessorProxy = {
+	getPrototypeOf: function(obj) {
+		return Object.getPrototypeOf(obj);
+	},
 	get: function(obj, prop) {
-		if ( prop === 'element' ) return obj;
+		const {element, exported} = _PRIVATES.get(obj);
+		if ( prop === 'element' ) return element;
 		
-		
-		const element = obj.querySelector(`[elm-export="${prop}"]`);
-		return element || obj[prop];
+		return exported[prop] || obj[prop];
 	},
 	set: function(obj, prop, value) {
 		if ( prop === "element" ) return false;
 		
-		
-		const element = obj.querySelector(`[elm-export="${prop}"]`);
-		if ( !element ) {
+		const {exported} = _PRIVATES.get(obj);
+		if ( !exported[prop] ) {
 			obj[prop] = value;
 		}
 		return true;
-	},
-	
+	}
 };
+export const HTMLElementAccessor = new Proxy(_HTMLElementAccessor, {
+	construct(target, args) {
+		const inst = new target(...args);
+		return new Proxy(inst, HTMLElementAccessorProxy);
+	},
+	apply() {
+		throw new TypeError( "Class constructor a cannot be invoked without 'new'" );
+	}
+});
+
+
+
 export class HTMLElementTemplate {
 	constructor(element) {
 		if ( typeof element === "string" ) {
@@ -51,6 +84,6 @@ export class HTMLElementTemplate {
 		});
 	}
 	produce() {
-		return new Proxy(this._tmpl_elm.cloneNode(true), TMPL_ITEM_PROXY);
+		return new HTMLElementAccessor(this._tmpl_elm.cloneNode(true));
 	}
 }
