@@ -5,7 +5,7 @@
 import assert from "assert";
 import {UniqueId, InitAccordingToEnv} from "../unique-id.esm.js";
 
-init_context(()=>{
+init_context('unique-id', ()=>{
 	test_group( "Test for UniqueId Construction", ()=>{
 		let _unique_id, _hex, _bits, _b16, _b2, _b64, _b64url, _b32, _ab, _ba, _past = new UniqueId("0000016c22d732fc0ac7dc6a8b8c8b8d008f960c");
 		unit_test( "Initializing a unique_id", async()=>{

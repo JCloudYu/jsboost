@@ -7,7 +7,7 @@ import {PackEncapsulateExecutor as Pack} from "../encapsulate-executor.esm.js";
 
 
 
-init_context(()=>{
+init_context('encapsulate-executor', ()=>{
 	test_group( "Sync execution vs async execution", ()=>{
 		const exec = Pack([
 			function() {

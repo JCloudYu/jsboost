@@ -6,7 +6,7 @@ import assert from "assert";
 import {Version} from "../version.esm.js";
 
 
-init_context(()=>{
+init_context('versioning', ()=>{
 	test_group( "semver functionality test", ()=>{
 		test_group( "construction test", ()=>{
 			unit_test( "new Version()", ()=>{

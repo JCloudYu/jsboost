@@ -39,27 +39,27 @@
 	
 	const MAX_TOTAL_LEVELS = 10;
 	const MAX_NESTED_LEVEL = MAX_TOTAL_LEVELS - 1;
-	const TEST_SCRIPTS = process.argv.slice(2);
 	
 	const root_procedure = __CREATE_PROCEDURE();
 	root_procedure.type = 'none';
 	root_procedure.script = null;
 	
 	
+	const procedure_id_map	= Object.create(null);
+	const picked_procedures	= [];
+	let current_script		= null;
+	let current_scope		= root_procedure;
 	
-	let current_script = null;
-	let current_scope = root_procedure;
-	
+	global.init_context  = __INIT_TEST_CONTEXT;
 	global.test_group	 = __SCHEDULE_GROUP_PROCEDURE;
 	global.unit_test	 = __SCHEDULE_TEST_PROCEDURE;
-	global.init_context  = __INIT_TEST_CONTEXT;
 	global.run_procedure = __SCHEDULE_SILENT_PROCEDURE;
 	
 	
 	
-	// region [ Load all modules ended with .test.js ]
-	try {
-		if ( TEST_SCRIPTS.length === 0 ) {
+	// INFO: Load all modules ended with .test.js
+	{
+		try {
 			const TEST_PATH = `${dir}/tests`;
 			const dir_list = fs.readdirSync(TEST_PATH, {withFileTypes:true});
 			for(const fInfo of dir_list) {
@@ -69,22 +69,36 @@
 				await acquire( current_script=fPath );
 			}
 		}
-		else {
-			for ( const SCRIPT of TEST_SCRIPTS ) {
-				const SCRIPT_PATH = path.resolve(`${dir}`, SCRIPT);
-				
-				await acquire( current_script=SCRIPT_PATH, false );
-			}
+		catch(e) {
+			throw e;
+		}
+		
+		for ( const procedure_id of process.argv.slice(2) ) {
+			picked_procedures.push(procedure_id);
 		}
 	}
-	catch(e) {
-		throw e;
-	}
-	// endregion
 	
 	// region [ Run tests ]
-	await __RUN_TEST_PROCEDURE(root_procedure);
-	await __PRINT_RESULT(root_procedure);
+	if ( picked_procedures.length === 0 ) {
+		await __RUN_PROCEDURE(root_procedure);
+		await __PRINT_RESULT(root_procedure);
+	}
+	else {
+		for( const id of picked_procedures ) {
+			const procedure = procedure_id_map[id];
+			if ( !procedure ) continue;
+			
+			await __RUN_PROCEDURE(procedure);
+		}
+		
+		for( const id of picked_procedures ) {
+			const procedure = procedure_id_map[id];
+			if ( !procedure ) continue;
+			
+			await __PRINT_RESULT(procedure);
+		}
+	}
+	
 	// endregion
 	
 	
@@ -96,7 +110,7 @@
 	
 	
 	// region [ Internal Helper Functions ]
-	async function __RUN_TEST_PROCEDURE(procedure) {
+	async function __RUN_PROCEDURE(procedure) {
 		current_scope = procedure;
 		
 		let group_passed = true;
@@ -117,7 +131,7 @@
 		
 		
 		for( const _procedure of procedure.children ) {
-			await __RUN_TEST_PROCEDURE(_procedure);
+			await __RUN_PROCEDURE(_procedure);
 			group_passed = group_passed && _procedure.passed;
 		}
 		
@@ -150,7 +164,12 @@
 	
 	
 	
-	function __INIT_TEST_CONTEXT(group_op) {
+	function __INIT_TEST_CONTEXT(id, group_op) {
+		if ( arguments.length < 2 ) {
+			group_op = id;
+			id = null;
+		}
+	
 		if ( typeof group_op !== "function" ) {
 			throw new SyntaxError( "The argument of `init_context` must be a function!" );
 		}
@@ -173,6 +192,10 @@
 		group.level = current_scope.level+1;
 		group.parent = current_scope;
 		current_scope.children.push(group);
+		
+		if ( id !== null ) {
+			procedure_id_map[id] = group;
+		}
 	}
 	function __SCHEDULE_GROUP_PROCEDURE(message, group_op) {
 		if ( typeof group_op !== "function" ) {
@@ -201,7 +224,7 @@
 		group.parent = current_scope;
 		current_scope.children.push(group);
 	}
-	function __SCHEDULE_TEST_PROCEDURE( message, test_op ) {
+	function __SCHEDULE_TEST_PROCEDURE(message, test_op) {
 		if ( typeof test_op !== "function" ) {
 			throw new SyntaxError( "The second argument of `unit_test` must be a function!" );
 		}

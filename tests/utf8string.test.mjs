@@ -7,7 +7,7 @@ import assert from "assert";
 import {UTF8String} from "../utf8string.esm.js";
 
 
-init_context(()=>{
+init_context('utf8string', ()=>{
 	test_group('UTF8 encoding & decoding', ()=>{
 		unit_test('1-byte sequence', ()=>{
 			let original = '7Bz^{';

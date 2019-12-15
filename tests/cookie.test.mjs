@@ -6,7 +6,7 @@ import assert from "assert";
 import {HTTPCookies} from "../http-cookies.esm.js";
 
 
-init_context(()=>{
+init_context('cookie', ()=>{
 	test_group( "Test cookie generation and parse", ()=>{
 		const GROUND_TRUTH = [
 			'179=FT_c3xSZyJqWe5eF1y_kNEg5DZgzGTcp4kRTwZeHGy3c7yDuZ-BrxiG1c_7stQLeGi3BcjuLYpa0GTM5NAMGskhuW5a_fe6A024EZw9tcynLLRKw8JYAKiK633JsmDAMIljlwdThDNRoTPxtxxPlbWEWb9PXy0Ceshxboez2gk8',

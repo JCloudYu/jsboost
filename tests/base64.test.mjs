@@ -12,7 +12,7 @@ import {
 } from "../base64.esm.js";
 
 
-init_context(()=>{
+init_context('base64', ()=>{
 	const truth_raw = Buffer.alloc(61);
 	truth_raw.set(crypto.randomBytes(61));
 	
