@@ -46,7 +46,7 @@
 	
 	
 	const procedure_id_map	= Object.create(null);
-	const picked_procedures	= [];
+	const requested_proc	= [];
 	let current_script		= null;
 	let current_scope		= root_procedure;
 	
@@ -74,27 +74,35 @@
 		}
 		
 		for ( const procedure_id of process.argv.slice(2) ) {
-			picked_procedures.push(procedure_id);
+			requested_proc.push(procedure_id);
 		}
 	}
 	
 	// region [ Run tests ]
-	if ( picked_procedures.length === 0 ) {
+	const selected_procedures = [];
+	for( const id of requested_proc ) {
+		const procedure = procedure_id_map[id];
+		if ( !procedure ) continue;
+		
+		selected_procedures.push(procedure);
+	}
+	if ( requested_proc.length > 0 && selected_procedures.length === 0 ) {
+		console.log("\u001b[91mNo matched procedures! Exiting...\u001b[39m");
+		process.exit(0);
+	}
+	
+	
+	
+	if ( selected_procedures.length === 0 ) {
 		await __RUN_PROCEDURE(root_procedure);
 		await __PRINT_RESULT(root_procedure);
 	}
 	else {
-		for( const id of picked_procedures ) {
-			const procedure = procedure_id_map[id];
-			if ( !procedure ) continue;
-			
+		for( const procedure of selected_procedures ) {
 			await __RUN_PROCEDURE(procedure);
 		}
 		
-		for( const id of picked_procedures ) {
-			const procedure = procedure_id_map[id];
-			if ( !procedure ) continue;
-			
+		for( const procedure of selected_procedures ) {
 			await __PRINT_RESULT(procedure);
 		}
 	}
