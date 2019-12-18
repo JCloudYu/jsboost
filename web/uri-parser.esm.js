@@ -108,3 +108,26 @@ export function ParseURLQuery(raw_query) {
 	
 	return parsed_queries;
 }
+
+/**
+ *	Parse and normalize given input path into absolute form
+ *	@param {String} path_part The path part to be processed
+ *	@returns {String}
+**/
+export function PurgeRelativePath(path_part) {
+	if ( path_part[0] !== "/" ) path_part = '/' + path_part;
+	
+	
+	const path_comp = path_part.substring(1).split('/');
+	const new_path = [];
+	for( const comp of path_comp ) {
+		if ( comp === "." ) continue;
+		if ( comp === ".." ) {
+			new_path.splice(new_path.length-1, 1);
+			continue;
+		}
+		new_path.push(comp);
+	}
+	
+	return `/${new_path.join('/')}`;
+}
