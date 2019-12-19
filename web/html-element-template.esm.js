@@ -6,7 +6,9 @@ const _PRIVATES = new WeakMap();
 class _HTMLElementAccessor {
 	constructor(element=null) {
 		const _PRIVATE = Object.assign(Object.create(null), {
-			element:null, exported:Object.create(null)
+			element:null, exported:Object.create(null),
+			func_bind: _HTMLElementAccessor.prototype.bind.bind(this),
+			func_relink: _HTMLElementAccessor.prototype.relink.bind(this),
 		});
 		_PRIVATES.set(this, _PRIVATE);
 		
@@ -44,13 +46,17 @@ const HTMLElementAccessorProxy = {
 		return Object.getPrototypeOf(obj);
 	},
 	get: function(obj, prop) {
-		const {element, exported} = _PRIVATES.get(obj);
+		const {element, exported, func_bind, func_relink} = _PRIVATES.get(obj);
 		if ( prop === 'element' ) return element;
+		if ( prop === 'bind' ) return func_bind;
+		if ( prop === 'relink' ) return func_relink;
 		
 		return exported[prop] || obj[prop];
 	},
 	set: function(obj, prop, value) {
 		if ( prop === "element" ) return false;
+		if ( prop === "bind" ) return false;
+		if ( prop === "relink" ) return false;
 		
 		const {exported} = _PRIVATES.get(obj);
 		if ( !exported[prop] ) {
