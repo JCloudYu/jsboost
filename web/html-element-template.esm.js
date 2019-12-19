@@ -4,22 +4,38 @@
 **/
 const _PRIVATES = new WeakMap();
 class _HTMLElementAccessor {
-	constructor(element) {
-		if ( !(element instanceof Element) ) {
-			throw new TypeError( "HTMLElementAccessor constructor only accept Element instances!" );
-		}
-		
-		
+	constructor(element=null) {
 		const _PRIVATE = Object.assign(Object.create(null), {
-			element, exported:Object.create(null)
+			element:null, exported:Object.create(null)
 		});
 		_PRIVATES.set(this, _PRIVATE);
 		
 		
+		if ( arguments.length === 0 ) return;
+		
+		this.bind(element);
+	}
+	bind(element) {
+		if ( !(element instanceof Element) ) {
+			throw new TypeError( "HTMLElementAccessor constructor only accept Element instances!" );
+		}
+		
+		const _PRIVATE = _PRIVATES.get(this);
+		_PRIVATE.element = element;
+		_PRIVATE.exported = Object.create(null);
+		
+		this.relink();
+	}
+	relink() {
+		const _PRIVATE = _PRIVATES.get(this);
+		_PRIVATE.exported = Object.create(null);
+		
+		
+		const {element, exported} = _PRIVATE;
 		const exported_items = element.querySelectorAll('[elm-export]');
 		for( const item of exported_items ) {
 			const export_name = item.getAttribute('elm-export');
-			_PRIVATE.exported[export_name] = item;
+			exported[export_name] = item;
 		}
 	}
 }
