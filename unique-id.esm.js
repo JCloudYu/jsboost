@@ -164,8 +164,10 @@ export class UniqueId {
 	static from(input=null) {
 		try { return new UniqueId(input); } catch(e) { return null; }
 	}
-	static set machine_id(val) { MACHINE_ID = `${val}`; }
-	static get machine_id() { return MACHINE_ID; }
+	static set machine_id(val) {
+		MACHINE_ID = fnv1a32(`${val}`);
+	}
+	static get machine_id() { return MACHINE_ID.slice(0); }
 	
 	static set pid(val) { PID = `${val}`; }
 	static get pid() { return PID; }
