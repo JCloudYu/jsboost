@@ -182,13 +182,13 @@ export async function BindMachineID() {
 	if ( typeof Buffer !== "undefined" ) {
 		const {default:os} = await import('os');
 		
-		UniqueId.machine_id = fnv1a32(os.hostname());
+		UniqueId.machine_id = os.hostname();
 		UniqueId.pid = process.pid;
 		UniqueId.ppid = process.ppid;
 	}
 	else
 	if ( typeof window !== "undefined" ) {
-		UniqueId.machine_id = fnv1a32(window.location.host||'');
+		UniqueId.machine_id = window.location.host||'';
 		UniqueId.pid = (Math.random() * 65535)|0;
 		UniqueId.ppid = (Math.random() * 65535)|0;
 	}
