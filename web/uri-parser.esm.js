@@ -89,6 +89,7 @@ export function ShiftURLPath(path) {
  *	@param {String} raw_query The input raw string to be parsed
  *	@return {Object};
 **/
+const URLQueryWhiteSpaceCharMatcher = /\+/g;
 export function ParseURLQuery(raw_query) {
 	raw_query = (raw_query||'').trim();
 	if ( raw_query[0] === '?' ) {
@@ -101,8 +102,8 @@ export function ParseURLQuery(raw_query) {
 		if ( pair === "" ) continue;
 		
 		let [key, value] = pair.split('=');
-		key = decodeURIComponent(key);
-		value = decodeURIComponent(value);
+		key = decodeURIComponent(key.replace(URLQueryWhiteSpaceCharMatcher, ' '));
+		value = decodeURIComponent(value.replace(URLQueryWhiteSpaceCharMatcher, ' '));
 		parsed_queries[key] = value;
 	}
 	
