@@ -103,7 +103,7 @@ export function ParseURLQuery(raw_query) {
 		
 		let [key, value] = pair.split('=');
 		key = decodeURIComponent(key.replace(URLQueryWhiteSpaceCharMatcher, ' '));
-		value = decodeURIComponent(value.replace(URLQueryWhiteSpaceCharMatcher, ' '));
+		value = value === undefined ? null : decodeURIComponent(value.replace(URLQueryWhiteSpaceCharMatcher, ' '));
 		parsed_queries[key] = value;
 	}
 	
